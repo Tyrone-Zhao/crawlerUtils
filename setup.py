@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name='crawlerUtils',
-    version='1.1.2',
+    version='1.1.6',
     description='Crawler Utils',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -40,3 +40,8 @@ setuptools.setup(
         'Blog': 'https://blog.csdn.net/weixin_41845533',
     },
 )
+
+
+# cd GitHub/crawlerUtils && rm -rf dist/* && python setup.py sdist bdist_wheel
+# twine upload dist/*
+# pip install --user --upgrade crawlerUtils

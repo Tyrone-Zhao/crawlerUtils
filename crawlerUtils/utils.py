@@ -2,9 +2,16 @@ import xlrd
 import json
 import requests
 import xlwt
+from bs4 import BeautifulSoup
+import base64
+import os
 
 
-__all__ = ["writeExcel", "readExcel", "readCookies", "getCookies", ]
+__all__ = [
+    "writeExcel", "readExcel", "readCookies", "getCookies", "getPostJson",
+    "getGetJson", "getPostText", "getGetText", "getPostSoup", "getGetSoup",
+    "captchaB64decode"
+]
 
 
 def writeExcel(row, column, label, worksheet=None, workbook=None, sheetname=None,
@@ -73,7 +80,7 @@ def readCookies(session, filepath='cookies.txt'):
     cookies_txt.close()
 
 
-def getCookies(session, url, headers, data={}, params={}, filepath='cookies.txt'):
+def getCookies(session, url, headers, data={}, params={}, json={}, filepath='cookies.txt'):
     """ 登陆获取cookies """
     session.post(url, headers=headers, data=data, params=params)
     # 在会话下，用post发起登录请求。
@@ -89,6 +96,79 @@ def getCookies(session, url, headers, data={}, params={}, filepath='cookies.txt'
     # 关闭文件
 
 
-# cd GitHub/crawlerUtils && rm -rf dist/* && python3 setup.py sdist bdist_wheel
-# twine upload dist/*
-# pip3 install --user --upgrade crawlerUtils
+def getPostJson(session, url, headers={}, params={}, data={}, json={}):
+    """ 获取Post请求的response.json() """
+    if params or data or json:
+        res = session.post(
+            url, headers=headers, params=params, data=data, json=json
+        )
+        res_json = res.json()
+        return res_json
+    else:
+        raise ValueError("缺少params参数或者data参数，或者json参数！")
+
+
+def getGetJson(session, url, headers={}, params={}, data={}, json={}):
+    """ 获取Get请求的response.json() """
+    res = session.get(
+        url, headers=headers, params=params, data=data, json=json
+    )
+    res_json = res.json()
+    return res_json
+
+
+def getPostText(session, url, headers={}, params={}, data={}, json={}):
+    """ 获取Post请求的response.text """
+    if params or data or json:
+        res = session.post(
+            url, headers=headers, params=params, data=data, json=json
+        )
+        return res.text
+    else:
+        raise ValueError("缺少params参数或者data参数，或者json参数！")
+
+
+def getGetText(session, url, headers={}, params={}, data={}, json={}):
+    """ 获取Get请求的response.text """
+    res = session.get(
+        url, headers=headers, params=params, data=data, json=json
+    )
+    return res.text
+
+
+def getPostSoup(session, url, headers={}, params={}, data={}, json={}, parser="html.parser"):
+    """ 获取Post请求的BeautifulSoup实例 """
+    if params or data or json:
+        res = session.post(
+            url, headers=headers, params=params, data=data, json=json
+        )
+        soup = BeautifulSoup(res.text, parser)
+        return soup
+    else:
+        raise ValueError("缺少params参数或者data参数，或者json参数！")
+
+
+def getGetSoup(session, url, headers={}, params={}, data={}, json={}, parser="html.parser"):
+    """ 获取Get请求的BeautifulSoup实例 """
+    res = session.get(
+        url, headers=headers, params=params, data=data, json=json
+    )
+    soup = BeautifulSoup(res.text, parser)
+    return soup
+
+
+def captchaB64decode(b64data, filename_unextension="b64temp", dir_path=None):
+    """ base64文本解码成文件, 返回文件路径 """
+    head_and_content = b64data.split(",")
+    extension = head_and_content[0].rsplit("/")[1].split(";")[0]
+    filename = filename_unextension + "." + extension
+    if dir_path:
+        filepath = dir_path + "/" + filename
+    else:
+        filepath = os.path.dirname(__file__) + \
+            "/captcha/captcha_set/" + filename
+    with open(filepath, 'wb') as f:
+        content_decode = base64.b64decode(head_and_content[1])
+        f.write(content_decode)
+    # print(f"验证码获取成功，保存路径为：{filepath}")
+    return filepath, extension
