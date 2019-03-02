@@ -41,3 +41,12 @@ getElemeDishes()
 
 识别成功如下显示:
 ![Image text](https://img-blog.csdnimg.cn/2019030221472810.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTg0NTUzMw==,size_16,color_FFFFFF,t_70)
+
+
+### 获取豆瓣top250电影信息
+这个程序是用requests+正则表达式写的，并没有使用BeautifulSoup
+```python
+from crawlerUtils import getDoubanTop250UseRegexExpression
+
+getDoubanTop250UseRegexExpression()
+```
