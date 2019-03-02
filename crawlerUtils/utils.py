@@ -1,10 +1,10 @@
 import xlrd
-import json
 import requests
 import xlwt
 from bs4 import BeautifulSoup
 import base64
 import os
+import json
 
 
 __all__ = [
@@ -66,23 +66,30 @@ def readExcel(excelpath=None, row_num=None, workbook=None, worksheet=None, colum
     return wb.sheets()
 
 
-def readCookies(session, filepath='cookies.txt'):
+def readCookies(session, filepath='crawlerUtilsCookies.txt'):
     """ 从txt文件读取cookies """
     # 如果能读取到cookies文件，执行以下代码，跳过except的代码，不用登录就能发表评论。
-    cookies_txt = open(filepath, 'r')
-    # 以reader读取模式，打开名为cookies.txt的文件。
-    cookies_dict = json.loads(cookies_txt.read())
-    # 调用json模块的loads函数，把字符串转成字典。
-    cookies = requests.utils.cookiejar_from_dict(cookies_dict)
-    # 把转成字典的cookies再转成cookies本来的格式。
-    session.cookies = cookies
-    # 获取cookies：就是调用requests对象（session）的cookies属性。
-    cookies_txt.close()
+    try:
+        cookies_txt = open(filepath, 'r')
+        # 以reader读取模式，打开名为cookies.txt的文件。
+        cookies_dict = cookies_txt.read()
+        if cookies_dict:
+            cookies_dict = json.loads(cookies_dict)
+        else:
+            raise FileNotFoundError
+        # 调用json模块的loads函数，把字符串转成字典。
+        cookies = requests.utils.cookiejar_from_dict(cookies_dict)
+        # 把转成字典的cookies再转成cookies本来的格式。
+        session.cookies = cookies
+        # 获取cookies：就是调用requests对象（session）的cookies属性。
+        cookies_txt.close()
+    except FileNotFoundError:
+        pass
 
 
-def getCookies(session, url, headers, data={}, params={}, json={}, filepath='cookies.txt'):
+def getCookies(session, url, headers, data={}, params={}, jsons={}, filepath='crawlerUtilsCookies.txt'):
     """ 登陆获取cookies """
-    session.post(url, headers=headers, data=data, params=params)
+    session.post(url, headers=headers, data=data, params=params, json=jsons)
     # 在会话下，用post发起登录请求。
     cookies_dict = requests.utils.dict_from_cookiejar(session.cookies)
     # 把cookies转化成字典。
@@ -96,11 +103,11 @@ def getCookies(session, url, headers, data={}, params={}, json={}, filepath='coo
     # 关闭文件
 
 
-def getPostJson(session, url, headers={}, params={}, data={}, json={}):
+def getPostJson(session, url, headers={}, params={}, data={}, jsons={}):
     """ 获取Post请求的response.json() """
     if params or data or json:
         res = session.post(
-            url, headers=headers, params=params, data=data, json=json
+            url, headers=headers, params=params, data=data, json=jsons
         )
         res_json = res.json()
         return res_json
@@ -108,39 +115,40 @@ def getPostJson(session, url, headers={}, params={}, data={}, json={}):
         raise ValueError("缺少params参数或者data参数，或者json参数！")
 
 
-def getGetJson(session, url, headers={}, params={}, data={}, json={}):
+def getGetJson(session, url, headers={}, params={}, data={}, jsons={}):
     """ 获取Get请求的response.json() """
     res = session.get(
-        url, headers=headers, params=params, data=data, json=json
+        url, headers=headers, params=params, data=data, json=jsons
     )
     res_json = res.json()
+
     return res_json
 
 
-def getPostText(session, url, headers={}, params={}, data={}, json={}):
+def getPostText(session, url, headers={}, params={}, data={}, jsons={}):
     """ 获取Post请求的response.text """
     if params or data or json:
         res = session.post(
-            url, headers=headers, params=params, data=data, json=json
+            url, headers=headers, params=params, data=data, json=jsons
         )
         return res.text
     else:
         raise ValueError("缺少params参数或者data参数，或者json参数！")
 
 
-def getGetText(session, url, headers={}, params={}, data={}, json={}):
+def getGetText(session, url, headers={}, params={}, data={}, jsons={}):
     """ 获取Get请求的response.text """
     res = session.get(
-        url, headers=headers, params=params, data=data, json=json
+        url, headers=headers, params=params, data=data, json=jsons
     )
     return res.text
 
 
-def getPostSoup(session, url, headers={}, params={}, data={}, json={}, parser="html.parser"):
+def getPostSoup(session, url, headers={}, params={}, data={}, jsons={}, parser="html.parser"):
     """ 获取Post请求的BeautifulSoup实例 """
     if params or data or json:
         res = session.post(
-            url, headers=headers, params=params, data=data, json=json
+            url, headers=headers, params=params, data=data, json=jsons
         )
         soup = BeautifulSoup(res.text, parser)
         return soup
@@ -148,10 +156,10 @@ def getPostSoup(session, url, headers={}, params={}, data={}, json={}, parser="h
         raise ValueError("缺少params参数或者data参数，或者json参数！")
 
 
-def getGetSoup(session, url, headers={}, params={}, data={}, json={}, parser="html.parser"):
+def getGetSoup(session, url, headers={}, params={}, data={}, jsons={}, parser="html.parser"):
     """ 获取Get请求的BeautifulSoup实例 """
     res = session.get(
-        url, headers=headers, params=params, data=data, json=json
+        url, headers=headers, params=params, data=data, json=jsons
     )
     soup = BeautifulSoup(res.text, parser)
     return soup

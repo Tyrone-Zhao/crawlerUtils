@@ -19,7 +19,6 @@ print(crawlerUtils.__all__)
 ```python
 from crawlerUtils import getQQSinger
 
-
 getQQSinger()
 ```
 
@@ -28,18 +27,16 @@ getQQSinger()
 ```python
 from crawlerUtils import getZhiHuArticle
 
-
 getZhiHuArticle()
 ```
 
 ### 登陆饿了么并获取附近餐厅
-还未完成，因为采用了机器学习，所以需要大量训练数据。目前训练数据不足，导致验证码识别准确度不高45%左右
+使用了向量空间，验证码识别准确度目前48%左右。每次使用自动在本地进行训练，越用越强！一次识别验证码成功后，自动保存crawlerUtilsCookies.txt到本地，下次直接登录，不用再进行验证码识别。
 ```python
 from crawlerUtils import getElemeDishes
-
 
 getElemeDishes()
 ```
 
 识别成功如下显示:
-![Image text](https://img-blog.csdnimg.cn/20190302190942567.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTg0NTUzMw==,size_16,color_FFFFFF,t_70)
+![Image text](https://img-blog.csdnimg.cn/2019030221472810.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTg0NTUzMw==,size_16,color_FFFFFF,t_70)

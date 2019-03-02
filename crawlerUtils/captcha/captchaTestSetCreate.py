@@ -27,7 +27,7 @@ def getRequsetCaptcha(session, headers, telephone_number, dir_path=None, captcha
     captcha_url = "https://h5.ele.me/restapi/eus/v3/captchas"
 
     captcha_json = getPostJson(
-        session, captcha_url, headers=headers, json=captcha_params)
+        session, captcha_url, headers=headers, jsons=captcha_params)
     captcha_hash = captcha_json["captcha_hash"]
     b64data = captcha_json['captcha_image']
     filepath, extension = captchaB64decode(b64data, captcha_name, dir_path)
