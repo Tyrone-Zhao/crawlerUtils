@@ -14,10 +14,20 @@ import crawlerUtils
 print(crawlerUtils.__all__)
 ```
 
+### 获取QQ音乐某个歌手的歌曲信息和评论
+结果会保存为Excel, 请在运行目录内查找
+```python
+from crawlerUtils import getQQSinger
+
+
+getQQSinger()
+```
+
 ### 获取知乎某个作者的所有文章
 结果会保存为Excel, 请在运行目录内查找
 ```python
 from crawlerUtils import getZhiHuArticle
+
 
 getZhiHuArticle()
 ```
@@ -28,12 +38,8 @@ getZhiHuArticle()
 from crawlerUtils import getElemeDishes
 
 
-if __name__ == "__main__":
-    getElemeDishes()
+getElemeDishes()
 ```
-以下异常即为验证码识别错误：
-发生异常: UnboundLocalError
-local variable 'validate_token' referenced before assignment
 
-识别成功如下显示，elemeDishes.py还未完全编写完成
+识别成功如下显示:
 ![Image text](https://img-blog.csdnimg.cn/20190302190942567.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTg0NTUzMw==,size_16,color_FFFFFF,t_70)
