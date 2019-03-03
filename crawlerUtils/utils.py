@@ -16,7 +16,8 @@ __all__ = [
     "getGetJson", "getPostText", "getGetText", "getPostSoup", "getGetSoup",
     "captchaB64decode", "getDriver", "getDriverHeadLess", "wait",
     "loginNoCaptcha", "getMCFunc", "loginNoCaptchaHeadLess", "getBSText",
-
+    "getSeleniumText", "getSeleniumSoup", "getSeleniumTextHeadLess",
+    "getSeleniumSoupHeadLess",
 ]
 
 
@@ -67,7 +68,7 @@ def getMCFunc(driver, method_string):
     }
 
     for method in methods_dict:
-        if method_string[-1] == "s" and method_string != "cs" and method_string != "css":
+        if method_string[-1] == "s" and method_string != "cs" and method_string != "css" and method_string != "ss":
             if method_string[:-1] in method:
                 return methods_dict[method]
         elif method_string in method:
@@ -316,6 +317,42 @@ def getGetSoup(session, url, headers={}, params={}, data={}, jsons={}, parser="h
     )
     soup = BeautifulSoup(res.text, parser)
     return soup
+
+
+def getSeleniumText(url):
+    """ 获取driver.page_source """
+    driver = getDriver()
+    driver.get(url)
+    time.sleep(2)
+
+    return driver, driver.page_source
+
+
+def getSeleniumSoup(url, parser="html.parser"):
+    """ 获取Beatifule(driver.page_source, "html.parser") """
+    driver = getDriver()
+    driver.get(url)
+    time.sleep(2)
+
+    return driver, BeautifulSoup(driver.page_source, parser)
+
+
+def getSeleniumTextHeadLess(url):
+    """ 无头模式获取driver.page_source """
+    driver = getDriverHeadLess()
+    driver.get(url)
+    time.sleep(2)
+
+    return driver, driver.page_source
+
+
+def getSeleniumSoupHeadLess(url, parser="html.parser"):
+    """ 无头模式获取Beatifule(driver.page_source, "html.parser") """
+    driver = getDriverHeadLess()
+    driver.get(url)
+    time.sleep(2)
+
+    return driver, BeautifulSoup(driver.page_source, parser)
 
 
 def captchaB64decode(b64data, filename_unextension="b64temp", dir_path=None):
