@@ -13,7 +13,6 @@ CURRENT_DIR = os.path.dirname(__file__)
 CAPTCHA_SET_PATH = CURRENT_DIR + "/captcha_set"
 SESSION = requests.session()
 HEADERS = {
-    "referer": "https://h5.ele.me/login/",
     "user-agent": "Mozilla/5.0 (Macintosh Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36",
 }
 
@@ -53,6 +52,8 @@ def cropImage(binary_object, letters, extension, dir_path=".", captcha_name="cap
 
 def splitCaptcha(captcha_name="captcha"):
     ''' 请求并分割验证码, 将结果放入captcha_set目录，需要人工筛选放入对应的子目录 '''
+    headers = HEADERS
+    headers["referer"] = "https://h5.ele.me/login/"
     telephone_numbers = [x for x in range(10)]
     telephone_heads = ["1581", "1861", "1355", "1760"]
 
@@ -62,7 +63,7 @@ def splitCaptcha(captcha_name="captcha"):
         telephone_number += str(random.choice(telephone_numbers))
 
     # 请求验证码
-    filepath, extension, captcha_hash = getRequsetCaptcha(SESSION, HEADERS, telephone_number,
+    filepath, extension, captcha_hash = getRequsetCaptcha(SESSION, headers, telephone_number,
                                                           dir_path=CAPTCHA_SET_PATH, captcha_name=captcha_name)
 
     # 扫描验证码
