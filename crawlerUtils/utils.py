@@ -5,6 +5,7 @@ import time
 import base64
 import os
 import json
+from urllib.request import quote, unquote
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -17,16 +18,13 @@ __all__ = [
     "captchaB64decode", "getDriver", "getDriverHeadLess", "wait",
     "loginNoCaptcha", "getMCFunc", "loginNoCaptchaHeadLess", "getBSText",
     "getSeleniumText", "getSeleniumSoup", "getSeleniumTextHeadLess",
-    "getSeleniumSoupHeadLess",
+    "getSeleniumSoupHeadLess", "beautifulJson", "setSessionCookies",
+    "urlencode", "urldecode", "getSeleniumJson", "getSeleniumJsonHeadLess",
+    "extract_cookies",
 ]
 
 
 MAX_WAIT = 10
-
-
-def getBSText(text, parser="html.parser"):
-    """ 返回BeautifulSoup(text, "html.parser") """
-    return BeautifulSoup(text, parser)
 
 
 def wait(fn):
@@ -41,6 +39,42 @@ def wait(fn):
                     raise e
                 time.sleep(0.5)
     return modified_fn
+
+
+def extract_cookies(cookie):
+    """从浏览器或者request headers中拿到cookie字符串，提取为字典格式的cookies"""
+    cookies = dict([l.split("=", 1) for l in cookie.split(";")])
+    return cookies
+
+
+def urlencode(string):
+    ''' 返回中文的urlencode()结果 '''
+    return quote(string)
+
+
+def urldecode(string):
+    ''' 返回urldecode()的中文结果 '''
+    return unquote(string)
+
+
+def setSessionCookies(session, cookies_dict):
+    ''' 从字典设置Session的cookies '''
+    session.cookies = requests.utils.cookiejar_from_dict(cookies_dict)
+
+
+def beautifulJson(text):
+    ''' 处理异常格式Json '''
+    start = text.find("{")
+    if start != 0:
+        end = text.rfind("}")
+    else:
+        end = len(text)
+    return json.loads(text[start:end])
+
+
+def getBSText(text, parser="html.parser"):
+    """ 返回BeautifulSoup(text, "html.parser") """
+    return BeautifulSoup(text, parser)
 
 
 def getMCFunc(driver, method_string):
@@ -93,8 +127,6 @@ def loginNoCaptchaAction(mc_username, mc_password, mc_submit_button,
     submit_button.click()
     time.sleep(2)
 
-    return driver
-
 
 def loginNoCaptcha(url, method_params, username, password):
     ''' 登录无验证码的网站 '''
@@ -107,8 +139,8 @@ def loginNoCaptcha(url, method_params, username, password):
     time.sleep(2)
 
     # 登录
-    driver = loginNoCaptchaAction(mc_username, mc_password,
-                                  mc_submit_button, driver, username, password)
+    loginNoCaptchaAction(mc_username, mc_password,
+                         mc_submit_button, driver, username, password)
 
     return driver
 
@@ -131,8 +163,6 @@ def loginNoCaptchaActionHeadless(mc_username, mc_password, mc_submit_button,
     submit_button.click()
     time.sleep(2)
 
-    return driver
-
 
 def loginNoCaptchaHeadLess(url, method_params, username, password):
     ''' 无头模式登录无验证码的网站 '''
@@ -145,8 +175,8 @@ def loginNoCaptchaHeadLess(url, method_params, username, password):
     time.sleep(2)
 
     # 登录
-    driver = loginNoCaptchaAction(mc_username, mc_password,
-                                  mc_submit_button, driver, username, password)
+    loginNoCaptchaAction(mc_username, mc_password,
+                         mc_submit_button, driver, username, password)
 
     return driver
 
@@ -154,17 +184,18 @@ def loginNoCaptchaHeadLess(url, method_params, username, password):
 def getDriver(options=None):
     ''' 返回Selenium Chrome Driver '''
     if options:
-        driver = webdriver.Chrome(options=options)
+        driver = webdriver.Chrome(chrome_options=options)
     else:
-        driver = webdriver.Chrome()
+        options = Options()
+        driver = webdriver.Chrome(chrome_options=options)
     return driver
 
 
 def getDriverHeadLess():
     ''' 返回Selenium HeadLess Chrome Driver '''
-    chrome_options = Options()
-    chrome_options.add_argument('--headless')
-    driver = getDriver(chrome_options)
+    options = Options()
+    options.add_argument('--headless')
+    driver = getDriver(options=options)
     return driver
 
 
@@ -220,25 +251,32 @@ def readExcel(excelpath=None, row_num=None, workbook=None, worksheet=None, colum
     return wb.sheets()
 
 
-def readCookies(session, filepath='crawlerUtilsCookies.txt'):
+def readCookies(session, filepath="", cookies=""):
     """ 从txt文件读取cookies """
     # 如果能读取到cookies文件，执行以下代码，跳过except的代码，不用登录就能发表评论。
-    try:
-        cookies_txt = open(filepath, 'r')
-        # 以reader读取模式，打开名为cookies.txt的文件。
-        cookies_dict = cookies_txt.read()
-        if cookies_dict:
-            cookies_dict = json.loads(cookies_dict)
-        else:
-            raise FileNotFoundError
-        # 调用json模块的loads函数，把字符串转成字典。
+    cookies_dict = {}
+    if cookies:
+        cookies_dict = extract_cookies(cookies)
         cookies = requests.utils.cookiejar_from_dict(cookies_dict)
-        # 把转成字典的cookies再转成cookies本来的格式。
         session.cookies = cookies
-        # 获取cookies：就是调用requests对象（session）的cookies属性。
-        cookies_txt.close()
-    except FileNotFoundError:
-        pass
+    elif not filepath:
+        filepath = 'crawlerUtilsCookies.txt'
+    elif filepath:
+        filepath = filepath
+        try:
+            cookies_txt = open(filepath, 'r')
+            # 以reader读取模式，打开名为cookies.txt的文件。
+            cookies_dict = cookies_txt.read()
+            if cookies_dict:
+                cookies_dict = json.loads(cookies_dict)
+            # 调用json模块的loads函数，把字符串转成字典。
+            cookies = requests.utils.cookiejar_from_dict(cookies_dict)
+            # 把转成字典的cookies再转成cookies本来的格式。
+            session.cookies = cookies
+            # 获取cookies：就是调用requests对象（session）的cookies属性。
+            cookies_txt.close()
+        except FileNotFoundError:
+            pass
 
 
 def getCookies(session, url, headers, data={}, params={}, jsons={}, filepath='crawlerUtilsCookies.txt'):
@@ -257,64 +295,70 @@ def getCookies(session, url, headers, data={}, params={}, jsons={}, filepath='cr
     # 关闭文件
 
 
-def getPostJson(session, url, headers={}, params={}, data={}, jsons={}):
+def getPostJson(session, url, headers={}, params={}, data={}, jsons={}, encoding="utf-8"):
     """ 获取Post请求的response.json() """
     if params or data or json:
         res = session.post(
             url, headers=headers, params=params, data=data, json=jsons
         )
-        res_json = res.json()
+        res.encoding = encoding
+        res_json = beautifulJson(res.text)
         return res_json
     else:
         raise ValueError("缺少params参数或者data参数，或者json参数！")
 
 
-def getGetJson(session, url, headers={}, params={}, data={}, jsons={}):
+def getGetJson(session, url, headers={}, params={}, data={}, jsons={}, encoding="utf-8"):
     """ 获取Get请求的response.json() """
     res = session.get(
         url, headers=headers, params=params, data=data, json=jsons
     )
-    res_json = res.json()
+    res.encoding = encoding
+    res_json = beautifulJson(res.text)
 
     return res_json
 
 
-def getPostText(session, url, headers={}, params={}, data={}, jsons={}):
+def getPostText(session, url, headers={}, params={}, data={}, jsons={}, encoding="utf-8"):
     """ 获取Post请求的response.text """
     if params or data or json:
         res = session.post(
             url, headers=headers, params=params, data=data, json=jsons
         )
+        res.encoding = encoding
         return res.text
     else:
         raise ValueError("缺少params参数或者data参数，或者json参数！")
 
 
-def getGetText(session, url, headers={}, params={}, data={}, jsons={}):
+def getGetText(session, url, headers={}, params={}, data={}, jsons={}, encoding="utf-8"):
     """ 获取Get请求的response.text """
     res = session.get(
         url, headers=headers, params=params, data=data, json=jsons
     )
+    res.encoding = encoding
     return res.text
 
 
-def getPostSoup(session, url, headers={}, params={}, data={}, jsons={}, parser="html.parser"):
+def getPostSoup(session, url, headers={}, params={}, data={}, jsons={}, parser="html.parser", encoding="utf-8"):
     """ 获取Post请求的BeautifulSoup实例 """
     if params or data or json:
         res = session.post(
             url, headers=headers, params=params, data=data, json=jsons
         )
+        res.encoding = encoding
         soup = BeautifulSoup(res.text, parser)
         return soup
     else:
         raise ValueError("缺少params参数或者data参数，或者json参数！")
 
 
-def getGetSoup(session, url, headers={}, params={}, data={}, jsons={}, parser="html.parser"):
+def getGetSoup(session, url, headers={}, params={}, data={}, jsons={}, parser="html.parser", encoding="utf-8"):
     """ 获取Get请求的BeautifulSoup实例 """
     res = session.get(
         url, headers=headers, params=params, data=data, json=jsons
     )
+    res.encoding = encoding
     soup = BeautifulSoup(res.text, parser)
     return soup
 
@@ -325,7 +369,16 @@ def getSeleniumText(url):
     driver.get(url)
     time.sleep(2)
 
-    return driver, driver.page_source
+    return driver.page_source
+
+
+def getSeleniumJson(url):
+    """ 获取json.loads(driver.page_source) """
+    driver = getDriver()
+    driver.get(url)
+    time.sleep(2)
+
+    return beautifulJson(driver.page_source)
 
 
 def getSeleniumSoup(url, parser="html.parser"):
@@ -334,7 +387,7 @@ def getSeleniumSoup(url, parser="html.parser"):
     driver.get(url)
     time.sleep(2)
 
-    return driver, BeautifulSoup(driver.page_source, parser)
+    return BeautifulSoup(driver.page_source, parser)
 
 
 def getSeleniumTextHeadLess(url):
@@ -343,7 +396,16 @@ def getSeleniumTextHeadLess(url):
     driver.get(url)
     time.sleep(2)
 
-    return driver, driver.page_source
+    return driver.page_source
+
+
+def getSeleniumJsonHeadLess(url):
+    """ 无头模式获取json.loads(driver.page_source) """
+    driver = getDriverHeadLess()
+    driver.get(url)
+    time.sleep(2)
+
+    return beautifulJson(driver.page_source)
 
 
 def getSeleniumSoupHeadLess(url, parser="html.parser"):
@@ -352,7 +414,7 @@ def getSeleniumSoupHeadLess(url, parser="html.parser"):
     driver.get(url)
     time.sleep(2)
 
-    return driver, BeautifulSoup(driver.page_source, parser)
+    return BeautifulSoup(driver.page_source, parser)
 
 
 def captchaB64decode(b64data, filename_unextension="b64temp", dir_path=None):
