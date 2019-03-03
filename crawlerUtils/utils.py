@@ -1,17 +1,170 @@
 import xlrd
 import requests
 import xlwt
-from bs4 import BeautifulSoup
+import time
 import base64
 import os
 import json
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import WebDriverException
 
 
 __all__ = [
     "writeExcel", "readExcel", "readCookies", "getCookies", "getPostJson",
     "getGetJson", "getPostText", "getGetText", "getPostSoup", "getGetSoup",
-    "captchaB64decode"
+    "captchaB64decode", "getDriver", "getDriverHeadLess", "wait",
+    "loginNoCaptcha", "getMCFunc", "loginNoCaptchaHeadLess", "getBSText",
+
 ]
+
+
+MAX_WAIT = 10
+
+
+def getBSText(text, parser="html.parser"):
+    """ 返回BeautifulSoup(text, "html.parser") """
+    return BeautifulSoup(text, parser)
+
+
+def wait(fn):
+    ''' 装饰器，不断调用指定的函数，并捕获常规的异常，直到超时为止 '''
+    def modified_fn(*args, **kwargs):
+        start_time = time.time()
+        while True:
+            try:
+                return fn(*args, **kwargs)
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+                time.sleep(0.5)
+    return modified_fn
+
+
+def getMCFunc(driver, method_string):
+    ''' 根据字符串返回对应的selenium定位函数 '''
+    method_dict = {
+        "id": driver.find_element_by_id,
+        "name": driver.find_element_by_name,
+        "tag_name": driver.find_element_by_tag_name,
+        "css_selector": driver.find_element_by_css_selector,
+        "link_text": driver.find_element_by_link_text,
+        "partial_link_text": driver.find_element_by_partial_link_text,
+        "xpath": driver.find_element_by_xpath,
+        "class_name": driver.find_element_by_class_name,
+    }
+
+    methods_dict = {
+        "id": driver.find_elements_by_id,
+        "name": driver.find_elements_by_name,
+        "tag_name": driver.find_elements_by_tag_name,
+        "css_selector": driver.find_elements_by_css_selector,
+        "link_text": driver.find_elements_by_link_text,
+        "partial_link_text": driver.find_elements_by_partial_link_text,
+        "xpath": driver.find_elements_by_xpath,
+        "class_name": driver.find_elements_by_class_name,
+    }
+
+    for method in methods_dict:
+        if method_string[-1] == "s" and method_string != "cs" and method_string != "css":
+            if method_string[:-1] in method:
+                return methods_dict[method]
+        elif method_string in method:
+            return method_dict[method]
+
+
+@wait
+def loginNoCaptchaAction(mc_username, mc_password, mc_submit_button,
+                         driver, username, password):
+    """ 完成登录动作 """
+    # 登录
+    username_element = getMCFunc(driver, mc_username[0])(
+        mc_username[1])
+    password_element = getMCFunc(driver, mc_password[0])(
+        mc_password[1])
+    submit_button = getMCFunc(driver, mc_submit_button[0])(
+        mc_submit_button[1])
+    username_element.clear()
+    password_element.clear()
+    username_element.send_keys(username)
+    password_element.send_keys(password)
+    submit_button.click()
+    time.sleep(2)
+
+    return driver
+
+
+def loginNoCaptcha(url, method_params, username, password):
+    ''' 登录无验证码的网站 '''
+    mc_username = method_params[0]
+    mc_password = method_params[1]
+    mc_submit_button = method_params[2]
+    # 进入首页
+    driver = getDriver()
+    driver.get(url)
+    time.sleep(2)
+
+    # 登录
+    driver = loginNoCaptchaAction(mc_username, mc_password,
+                                  mc_submit_button, driver, username, password)
+
+    return driver
+
+
+@wait
+def loginNoCaptchaActionHeadless(mc_username, mc_password, mc_submit_button,
+                                 driver, username, password):
+    """ 无头模式完成登录动作 """
+    # 登录
+    username_element = getMCFunc(driver, mc_username[0])(
+        mc_username[1])
+    password_element = getMCFunc(driver, mc_password[0])(
+        mc_password[1])
+    submit_button = getMCFunc(driver, mc_submit_button[0])(
+        mc_submit_button[1])
+    username_element.clear()
+    password_element.clear()
+    username_element.send_keys(username)
+    password_element.send_keys(password)
+    submit_button.click()
+    time.sleep(2)
+
+    return driver
+
+
+def loginNoCaptchaHeadLess(url, method_params, username, password):
+    ''' 无头模式登录无验证码的网站 '''
+    mc_username = method_params[0]
+    mc_password = method_params[1]
+    mc_submit_button = method_params[2]
+    # 进入首页
+    driver = getDriverHeadLess()
+    driver.get(url)
+    time.sleep(2)
+
+    # 登录
+    driver = loginNoCaptchaAction(mc_username, mc_password,
+                                  mc_submit_button, driver, username, password)
+
+    return driver
+
+
+def getDriver(options=None):
+    ''' 返回Selenium Chrome Driver '''
+    if options:
+        driver = webdriver.Chrome(options=options)
+    else:
+        driver = webdriver.Chrome()
+    return driver
+
+
+def getDriverHeadLess():
+    ''' 返回Selenium HeadLess Chrome Driver '''
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    driver = getDriver(chrome_options)
+    return driver
 
 
 def writeExcel(row, column, label, worksheet=None, workbook=None, sheetname=None,

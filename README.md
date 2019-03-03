@@ -1,5 +1,5 @@
 # crawlerUtils
-用requests和BeautifulSoup写爬虫时会用到的函数和类等
+爬虫专用框架，对requests、BeautifulSoup进行了再封装，并加入了一些常用模块
 
 ## Installation
 ```shell
@@ -7,6 +7,8 @@ pip install crawlerUtils
 ```
 
 ## Examples
+
+### 以下所有例子的源代码都在crawlerUtils/examples里
 
 ### 查看所有可用变量和函数
 ```python
@@ -43,10 +45,21 @@ getElemeDishes()
 ![Image text](https://img-blog.csdnimg.cn/2019030221472810.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTg0NTUzMw==,size_16,color_FFFFFF,t_70)
 
 
-### 获取豆瓣top250电影信息
+### 使用requests+正则表达式获取豆瓣top250电影信息
 这个程序是用requests+正则表达式写的，并没有使用BeautifulSoup
 ```python
 from crawlerUtils import getDoubanTop250UseRegexExpression
 
 getDoubanTop250UseRegexExpression()
 ```
+
+### Selenium实现登录并用BeatifulSoup解析文本打印Python之禅
+这个程序是使用crawlerUtils里封装的getMCFunc、getBSText、loginNoCaptcha写的
+```python
+from crawlerUtils import loginAndPrintZens
+
+loginAndPrintZens()
+```
+
+## 更新记录
+V1.4.1 更新内容: 封装了一些BeautifulSoup和Selenium函数、增加打印python之禅的例子
