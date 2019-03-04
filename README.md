@@ -61,5 +61,13 @@ from crawlerUtils import loginAndPrintZens
 loginAndPrintZens()
 ```
 
+### 每天定时发送天气信息邮件
+这个程序是使用crawlerUtils里封装的每天定时发送邮件函数及urlOpen等函数写的
+```python
+from crawlerUtils import sendCityWeatherEveryDay
+
+sendCityWeatherEveryDay("广州")
+```
+
 ## 更新记录
 V1.4.1 更新内容: 封装了一些BeautifulSoup和Selenium函数、增加打印python之禅的例子

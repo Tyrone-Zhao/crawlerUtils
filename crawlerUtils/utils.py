@@ -5,6 +5,11 @@ import time
 import base64
 import os
 import json
+import smtplib
+import schedule
+from email.mime.text import MIMEText
+from email.header import Header
+from email.utils import formataddr
 from urllib.request import quote, unquote, urlopen
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -21,6 +26,7 @@ __all__ = [
     "getSeleniumSoupHeadLess", "beautifulJson", "setSessionCookies",
     "urlencode", "urldecode", "getSeleniumJson", "getSeleniumJsonHeadLess",
     "extract_cookies", "urllibOpen", "urllibOpenText", "urllibOpenJson",
+    "urllibOpenSoup", "sendMail", "sendMailInput", "regularEmailEveryDayTime",
 
 ]
 
@@ -42,6 +48,47 @@ def wait(fn):
     return modified_fn
 
 
+def regularEmailEveryDayTime(func, recipients, account, password, subj, text, daytime):
+    ''' 每天定时发邮件，daytime="18:20" '''
+    schedule.every().day.at(daytime).do(
+        func,
+        recipients, account, password, subj, text)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
+def sendMail(recipients=[], account="", password="", subj="", text=""):
+    """ 发送邮件 """
+    smtp = smtplib.SMTP("smtp.qq.com")
+    smtp.login(account, password)
+    smtp.noop()
+    smtp.login(account, password)
+    sender = "亲爱的我"
+    recipients = recipients.split()
+    recipient = "亲爱的你"
+
+    message = MIMEText(text, "html", "utf-8")
+    message['From'] = formataddr([sender, account])
+    message["Subject"] = Header(subj, "utf-8")
+    message["To"] = Header(recipient, "utf-8")
+
+    smtp.sendmail(account, recipients, message.as_string())
+    smtp.quit()
+
+
+def sendMailInput():
+    ''' 接收发送邮件所需要的信息 '''
+    recipients = input("请输入收件人列表，多个收件人以空格隔开：")
+    account = input("请输入你的QQ邮箱账号：")
+    password = input("请输入你的QQ邮箱授权码：")
+    subj = input("请输入邮件主题：")
+    text = input("请输入邮件内容：")
+
+    return recipients, account, password, subj, text
+
+
 def urllibOpen(url, data=None):
     ''' 通过urllib.request.urlopen访问url，返回response对象
         selenium当前版本在访问某些响应头没有指定编码的url时，driver.page_source会返回乱码
@@ -49,17 +96,26 @@ def urllibOpen(url, data=None):
     return urlopen(url, data)
 
 
-def urllibOpenText(url, data=None):
+def urllibOpenText(url, data=None, encoding="utf-8"):
     ''' 返回response.read().decode("utf-8") '''
-    return urllibOpen(url, data).read().decode("utf-8")
+    return urllibOpen(url, data).read().decode(encoding)
 
 
-def urllibOpenJson(url, data=None):
+def urllibOpenJson(url, data=None, encoding="utf-8"):
     ''' 返回urllibOpenText及一些处理后的json '''
-    text = urllibOpenText(url, data)
+    text = urllibOpenText(url, data, encoding)
     text_json = beautifulJson(text)
 
     return text_json
+
+
+def urllibOpenSoup(url, data=None, encoding="utf-8", parser="html.parser"):
+    ''' 返回BeautifulSoup(
+            urllibOpenText(url, data=None, encoding="utf-8"), "html.parser"
+        ) 
+    '''
+    return BeautifulSoup(
+        urllibOpenText(url, data=None, encoding="utf-8"), parser)
 
 
 def extract_cookies(cookie):
@@ -95,7 +151,10 @@ def beautifulJson(text):
         text_json = text[start_temp:end_temp]
     else:
         text_json = ""
-    return json.loads(text_json)
+    if text_json:
+        return json.loads(text_json)
+    else:
+        return ""
 
 
 def getBSText(text, parser="html.parser"):
