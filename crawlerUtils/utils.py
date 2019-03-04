@@ -5,7 +5,7 @@ import time
 import base64
 import os
 import json
-from urllib.request import quote, unquote
+from urllib.request import quote, unquote, urlopen
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -20,7 +20,8 @@ __all__ = [
     "getSeleniumText", "getSeleniumSoup", "getSeleniumTextHeadLess",
     "getSeleniumSoupHeadLess", "beautifulJson", "setSessionCookies",
     "urlencode", "urldecode", "getSeleniumJson", "getSeleniumJsonHeadLess",
-    "extract_cookies",
+    "extract_cookies", "urllibOpen", "urllibOpenText", "urllibOpenJson",
+
 ]
 
 
@@ -39,6 +40,26 @@ def wait(fn):
                     raise e
                 time.sleep(0.5)
     return modified_fn
+
+
+def urllibOpen(url, data=None):
+    ''' 通过urllib.request.urlopen访问url，返回response对象
+        selenium当前版本在访问某些响应头没有指定编码的url时，driver.page_source会返回乱码
+    '''
+    return urlopen(url, data)
+
+
+def urllibOpenText(url, data=None):
+    ''' 返回response.read().decode("utf-8") '''
+    return urllibOpen(url, data).read().decode("utf-8")
+
+
+def urllibOpenJson(url, data=None):
+    ''' 返回urllibOpenText及一些处理后的json '''
+    text = urllibOpenText(url, data)
+    text_json = beautifulJson(text)
+
+    return text_json
 
 
 def extract_cookies(cookie):
@@ -64,12 +85,17 @@ def setSessionCookies(session, cookies_dict):
 
 def beautifulJson(text):
     ''' 处理异常格式Json '''
-    start = text.find("{")
-    if start != 0:
-        end = text.rfind("}")
+    start_temp = text.find("{")
+    end_temp = text.rfind("}") + 1
+    start = text.find("[")
+    end = text.rfind("]") + 1
+    if start < start_temp and start != -1:
+        text_json = text[start:end]
+    elif start > start_temp and start_temp != -1:
+        text_json = text[start_temp:end_temp]
     else:
-        end = len(text)
-    return json.loads(text[start:end])
+        text_json = ""
+    return json.loads(text_json)
 
 
 def getBSText(text, parser="html.parser"):
@@ -297,22 +323,29 @@ def getCookies(session, url, headers, data={}, params={}, jsons={}, filepath='cr
 
 def getPostJson(session, url, headers={}, params={}, data={}, jsons={}, encoding="utf-8"):
     """ 获取Post请求的response.json() """
-    if params or data or json:
+    if jsons:
         res = session.post(
-            url, headers=headers, params=params, data=data, json=jsons
+            url, headers=headers, json=jsons
         )
-        res.encoding = encoding
-        res_json = beautifulJson(res.text)
-        return res_json
     else:
-        raise ValueError("缺少params参数或者data参数，或者json参数！")
+        res = session.post(
+            url, headers=headers, params=params, data=data
+        )
+    res.encoding = encoding
+    res_json = beautifulJson(res.text)
+    return res_json
 
 
 def getGetJson(session, url, headers={}, params={}, data={}, jsons={}, encoding="utf-8"):
     """ 获取Get请求的response.json() """
-    res = session.get(
-        url, headers=headers, params=params, data=data, json=jsons
-    )
+    if jsons:
+        res = session.get(
+            url, headers=headers, json=jsons
+        )
+    else:
+        res = session.get(
+            url, headers=headers, params=params, data=data
+        )
     res.encoding = encoding
     res_json = beautifulJson(res.text)
 
@@ -321,98 +354,112 @@ def getGetJson(session, url, headers={}, params={}, data={}, jsons={}, encoding=
 
 def getPostText(session, url, headers={}, params={}, data={}, jsons={}, encoding="utf-8"):
     """ 获取Post请求的response.text """
-    if params or data or json:
+    if jsons:
         res = session.post(
-            url, headers=headers, params=params, data=data, json=jsons
+            url, headers=headers, json=jsons
         )
-        res.encoding = encoding
-        return res.text
     else:
-        raise ValueError("缺少params参数或者data参数，或者json参数！")
+        res = session.post(
+            url, headers=headers, params=params, data=data
+        )
+    res.encoding = encoding
+    return res.text
 
 
 def getGetText(session, url, headers={}, params={}, data={}, jsons={}, encoding="utf-8"):
     """ 获取Get请求的response.text """
-    res = session.get(
-        url, headers=headers, params=params, data=data, json=jsons
-    )
+    if jsons:
+        res = session.get(
+            url, headers=headers, json=jsons
+        )
+    else:
+        res = session.get(
+            url, headers=headers, params=params, data=data
+        )
     res.encoding = encoding
     return res.text
 
 
 def getPostSoup(session, url, headers={}, params={}, data={}, jsons={}, parser="html.parser", encoding="utf-8"):
     """ 获取Post请求的BeautifulSoup实例 """
-    if params or data or json:
+    if jsons:
         res = session.post(
-            url, headers=headers, params=params, data=data, json=jsons
+            url, headers=headers, json=jsons
         )
-        res.encoding = encoding
-        soup = BeautifulSoup(res.text, parser)
-        return soup
     else:
-        raise ValueError("缺少params参数或者data参数，或者json参数！")
-
-
-def getGetSoup(session, url, headers={}, params={}, data={}, jsons={}, parser="html.parser", encoding="utf-8"):
-    """ 获取Get请求的BeautifulSoup实例 """
-    res = session.get(
-        url, headers=headers, params=params, data=data, json=jsons
-    )
+        res = session.post(
+            url, headers=headers, params=params, data=data
+        )
     res.encoding = encoding
     soup = BeautifulSoup(res.text, parser)
     return soup
 
 
-def getSeleniumText(url):
+def getGetSoup(session, url, headers={}, params={}, data={}, jsons={}, parser="html.parser", encoding="utf-8"):
+    """ 获取Get请求的BeautifulSoup实例 """
+    if jsons:
+        res = session.get(
+            url, headers=headers, json=jsons
+        )
+    else:
+        res = session.get(
+            url, headers=headers, params=params, data=data
+        )
+    res.encoding = encoding
+    soup = BeautifulSoup(res.text, parser)
+    return soup
+
+
+def getSeleniumText(url, sleep_time=2):
     """ 获取driver.page_source """
     driver = getDriver()
     driver.get(url)
-    time.sleep(2)
+    time.sleep(sleep_time)
 
     return driver.page_source
 
 
-def getSeleniumJson(url):
+def getSeleniumJson(url, sleep_time=2):
     """ 获取json.loads(driver.page_source) """
     driver = getDriver()
     driver.get(url)
-    time.sleep(2)
+    time.sleep(sleep_time)
 
     return beautifulJson(driver.page_source)
 
 
-def getSeleniumSoup(url, parser="html.parser"):
+def getSeleniumSoup(url, parser="html.parser", sleep_time=2):
     """ 获取Beatifule(driver.page_source, "html.parser") """
     driver = getDriver()
     driver.get(url)
-    time.sleep(2)
+    time.sleep(sleep_time)
 
     return BeautifulSoup(driver.page_source, parser)
 
 
-def getSeleniumTextHeadLess(url):
+def getSeleniumTextHeadLess(url, sleep_time=2):
     """ 无头模式获取driver.page_source """
     driver = getDriverHeadLess()
     driver.get(url)
-    time.sleep(2)
+    time.sleep(sleep_time)
 
     return driver.page_source
 
 
-def getSeleniumJsonHeadLess(url):
+def getSeleniumJsonHeadLess(url, sleep_time=2):
     """ 无头模式获取json.loads(driver.page_source) """
     driver = getDriverHeadLess()
     driver.get(url)
-    time.sleep(2)
+    time.sleep(sleep_time)
 
     return beautifulJson(driver.page_source)
 
 
-def getSeleniumSoupHeadLess(url, parser="html.parser"):
+def getSeleniumSoupHeadLess(url, parser="html.parser", sleep_time=2):
     """ 无头模式获取Beatifule(driver.page_source, "html.parser") """
     driver = getDriverHeadLess()
     driver.get(url)
-    time.sleep(2)
+    time.sleep(sleep_time)
 
     return BeautifulSoup(driver.page_source, parser)
 
