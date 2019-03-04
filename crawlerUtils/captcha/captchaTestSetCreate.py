@@ -1,20 +1,16 @@
 from .captchaRecognizeMain import CAPTCHA_SET, captchaRecognize
-from ..utils import getPostJson, captchaB64decode
+from ..utils import getPostJson, captchaB64decode, SESSION, HEADERS
 import os
 import random
 import requests
 
 
 __all__ = ["createTestSet", "cropImage", "CAPTCHA_SET_PATH",
-           "CURRENT_DIR", "SESSION", "HEADERS", "getRequsetCaptcha"]
+           "CURRENT_DIR", "getRequsetCaptcha"]
 
 
 CURRENT_DIR = os.path.dirname(__file__)
 CAPTCHA_SET_PATH = CURRENT_DIR + "/captcha_set"
-SESSION = requests.session()
-HEADERS = {
-    "user-agent": "Mozilla/5.0 (Macintosh Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36",
-}
 
 
 def getRequsetCaptcha(session, headers, telephone_number, dir_path=None, captcha_name="captcha"):
