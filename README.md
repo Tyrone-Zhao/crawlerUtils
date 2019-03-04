@@ -70,4 +70,5 @@ sendCityWeatherEveryDay("广州")
 ```
 
 ## 更新记录
+V1.4.2 更新内容: 增加每日定时发送天气的example及定时发送邮件等函数
 V1.4.1 更新内容: 封装了一些BeautifulSoup和Selenium函数、增加打印python之禅的例子
