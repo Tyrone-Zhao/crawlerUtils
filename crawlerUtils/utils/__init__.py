@@ -8,6 +8,7 @@ from .selenium import *
 from .urllib import *
 from .html import *
 from .time import *
+from .log import *
 
 
 __all__ = []
@@ -21,3 +22,4 @@ __all__.extend(selenium.__all__)
 __all__.extend(urllib.__all__)
 __all__.extend(html.__all__)
 __all__.extend(time.__all__)
+__all__.extend(log.__all__)

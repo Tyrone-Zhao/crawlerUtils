@@ -8,6 +8,40 @@ pip install crawlerUtils
 
 ## Usages
 
+### crawlerUtils.utils.log
+result had be writen into all.log and error.log
+```python
+from crawlerUtils.utils import setLog
+
+logger = setLog()
+logger.debug("这是一条debug信息")
+logger.info("这是一条info信息")
+logger.warning("这是一条warning信息")
+logger.error("这是一条error信息")
+logger.critical("这是一条critical信息")
+logger.exception("这是一条exception信息")
+```
+
+** all.log **
+```
+2019-03-05 21:51:12,118 - DEBUG - 这是一条debug信息
+2019-03-05 21:51:12,119 - INFO - 这是一条info信息
+2019-03-05 21:51:12,121 - WARNING - 这是一条warning信息
+2019-03-05 21:51:12,122 - ERROR - 这是一条error信息
+2019-03-05 21:51:12,123 - CRITICAL - 这是一条critical信息
+2019-03-05 21:51:12,124 - ERROR - 这是一条exception信息
+NoneType: None
+```
+
+** error.log **
+```
+2019-03-05 21:51:12,122 - ERROR - noUse.py[:7] - 这是一条error信息
+2019-03-05 21:51:12,123 - CRITICAL - noUse.py[:8] - 这是一条critical信息
+2019-03-05 21:51:12,124 - ERROR - noUse.py[:9] - 这是一条exception信息
+NoneType: None
+```
+
+
 ### crawlerUtils.utils.selenium
 ```python
 from crawlerUtils.utils import loginNoCaptcha, getMCFunc, getBSText
