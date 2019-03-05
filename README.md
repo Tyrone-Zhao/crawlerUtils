@@ -22,7 +22,7 @@ logger.critical("这是一条critical信息")
 logger.exception("这是一条exception信息")
 ```
 
-** all.log **
+**all.log**
 ```
 2019-03-05 21:51:12,118 - DEBUG - 这是一条debug信息
 2019-03-05 21:51:12,119 - INFO - 这是一条info信息
@@ -33,7 +33,7 @@ logger.exception("这是一条exception信息")
 NoneType: None
 ```
 
-** error.log **
+**error.log**
 ```
 2019-03-05 21:51:12,122 - ERROR - noUse.py[:7] - 这是一条error信息
 2019-03-05 21:51:12,123 - CRITICAL - noUse.py[:8] - 这是一条critical信息
@@ -238,6 +238,9 @@ print(crawlerUtils.examples.__all__)
 
 
 ## 更新记录
+- V
+更新内容: 增加utils.log模块，加入moviedownload.py 多线程Windows64位版
+
 - V1.5.0 
 更新内容: 集成schedule库函数, 重构utils代码
 
