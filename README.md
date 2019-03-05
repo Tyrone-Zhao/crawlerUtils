@@ -11,7 +11,6 @@ pip install crawlerUtils
 ### crawlerUtils.utils.selenium
 ```python
 from crawlerUtils.utils import loginNoCaptcha, getMCFunc, getBSText
-import time
 
 
 def loginAndPrintZens():
@@ -125,8 +124,7 @@ def getZhiHuArticle():
     # 获取作者url_name
     authors = _getAuthorNames(name)
     if not authors:
-
-        _getAuthorNames(name)
+        authors = _getAuthorNames(name)
     # 获取作者的所有文章
     for author in authors:
         time.sleep(1)

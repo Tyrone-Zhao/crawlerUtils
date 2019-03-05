@@ -29,7 +29,7 @@ def sendMail(recipients=[], account="", password="", subj="", text=""):
 
 
 def sendMailInput():
-    ''' 接收发送邮件所需要的信息 '''
+    ''' 接收发送邮件所需要的信息，返回recipients, account, password, subj, text '''
     recipients = input("请输入收件人列表，多个收件人以空格隔开：")
     account = input("请输入你的QQ邮箱账号：")
     password = input("请输入你的QQ邮箱授权码：")
