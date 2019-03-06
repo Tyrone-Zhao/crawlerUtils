@@ -2,7 +2,7 @@ import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import WebDriverException
-from .requestAndBeautifulSoup import getBSText, beautifulJson
+from .requestAndBeautifulSoup import Crawler
 from .decorator import wait
 
 
@@ -150,7 +150,7 @@ def getSeleniumJson(url, sleep_time=2):
     driver.get(url)
     time.sleep(sleep_time)
 
-    return beautifulJson(driver.page_source)
+    return Crawler.beautifulJson(driver.page_source)
 
 
 def getSeleniumSoup(url, parser="html.parser", sleep_time=2):
@@ -159,7 +159,7 @@ def getSeleniumSoup(url, parser="html.parser", sleep_time=2):
     driver.get(url)
     time.sleep(sleep_time)
 
-    return getBSText(driver.page_source, parser)
+    return Crawler.getBSText(driver.page_source, parser)
 
 
 def getSeleniumTextHeadLess(url, sleep_time=2):
@@ -177,7 +177,7 @@ def getSeleniumJsonHeadLess(url, sleep_time=2):
     driver.get(url)
     time.sleep(sleep_time)
 
-    return beautifulJson(driver.page_source)
+    return Crawler.beautifulJson(driver.page_source)
 
 
 def getSeleniumSoupHeadLess(url, parser="html.parser", sleep_time=2):
@@ -186,4 +186,4 @@ def getSeleniumSoupHeadLess(url, parser="html.parser", sleep_time=2):
     driver.get(url)
     time.sleep(sleep_time)
 
-    return getBSText(driver.page_source, parser)
+    return Crawler.getBSText(driver.page_source, parser)

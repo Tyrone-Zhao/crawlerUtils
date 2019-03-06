@@ -19,3 +19,15 @@ def wait(fn):
                     raise e
                 time.sleep(0.5)
     return modified_fn
+
+
+def Singleton(cls):
+    ''' 单例模式装饰器 '''
+    _instance = {}
+
+    def _singleton(*args, **kargs):
+        if cls not in _instance:
+            _instance[cls] = cls(*args, **kargs)
+        return _instance[cls]
+
+    return _singleton

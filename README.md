@@ -44,7 +44,7 @@ NoneType: None
 
 ### crawlerUtils.utils.selenium
 ```python
-from crawlerUtils.utils import loginNoCaptcha, getMCFunc, getBSText
+from crawlerUtils.utils import loginNoCaptcha, getMCFunc, Crawler
 
 
 def loginAndPrintZens():
@@ -60,8 +60,8 @@ def loginAndPrintZens():
 
     driver = loginNoCaptcha(url, method_params, username, password)
     zens = getMCFunc(driver, "ids")("p")
-    english_zen = getBSText(zens[0].text)
-    chinese_zen = getBSText(zens[1].text)
+    english_zen = Crawler.getBSText(zens[0].text)
+    chinese_zen = Crawler.getBSText(zens[1].text)
     print(f"英文版Python之禅：\n{english_zen.text}\n")
     print(f"\n中文版Python之禅：\n{chinese_zen.text}\n")
 ```
@@ -69,12 +69,11 @@ def loginAndPrintZens():
 ### crawlerUtils.utils.requestAndBeautifulSoup and crawlerUtils.utils.excel
 ```python
 import time
-from crawlerUtils.utils import getGetSoup, beautifulJson, writeExcel, getGetJson, SESSION, HEADERS
+from ..utils import writeExcel, Get
 
 
 def _getAuthorNames(name):
     """ 获取作者名字 """
-    SESSION.headers = HEADERS
     author_headers = {
         "referer": "https://www.zhihu.com/search?type=content&q=python"
     }
@@ -86,9 +85,8 @@ def _getAuthorNames(name):
 
     author_url = "https://www.zhihu.com/search"
 
-    author_soup = getGetSoup(
-        SESSION, author_url, headers=author_headers, params=author_params)
-    author_name_json = beautifulJson(
+    author_soup = Get(author_url, headers=author_headers, params=author_params).soup()
+    author_name_json = Get.beautifulJson(
         author_soup.find("script", id="js-initialData").text
     )
     author_names = list(author_name_json['initialState']['entities']['users'])
@@ -121,8 +119,7 @@ def _getOneAuthorsArticles(author, wb):
 
         articles_url = f"https://www.zhihu.com/api/v4/members/{author}/articles"
 
-        articles_res_json = getGetJson(
-            SESSION, articles_url, headers=headers, params=articles_params)
+        articles_res_json = Get(articles_url, headers=headers, params=articles_params).json()
 
         articles = articles_res_json["data"]
         for article in articles:
@@ -165,11 +162,12 @@ def getZhiHuArticle():
         _getOneAuthorsArticles(author, wb)
 
     wb.save(f"zhihu{name}.xls")
+
 ```
 
 ### crawlerUtils.utils.urllib and crawlerUtils.utils.mail and crawlerUtils.utils.schedule
 ```python
-from crawlerUtils.utils import (
+from ..utils import (
     urllibOpenJson,
     urlencode,
     urllibOpenSoup,
@@ -212,8 +210,8 @@ def sendCityWeatherEveryDay(city="北京"):
     text = " ".join(weather)
     daytime = input("请问每天的几点发送邮件？格式'18:30'，不包含单引号 ：")
 
-    regularFuncEveryDayTime(sendMail, recipients, account,
-                            password, subj, text, daytime)
+    regularFuncEveryDayTime(sendMail, daytime, recipients, account,
+                            password, subj, text)
 
 ```
 
@@ -230,15 +228,59 @@ print(crawlerUtils.examples.__all__)
 
 包括：
 - 获取QQ音乐某个歌手的歌曲信息和评论
+```python
+from crawlerUtils.examples import *
+
+
+getQQSinger()
+```
+
 - 获取知乎某个作者的所有文章
+```python
+from crawlerUtils.examples import *
+
+
+getZhiHuArticle()
+```
+
 - 登陆饿了么并获取附近餐厅, 使用了向量空间进行验证码识别
+```python
+from crawlerUtils.examples import *
+
+
+getElemeDishes()
+```
+
 - 获取豆瓣top250电影信息, 使用requests+正则表达式
+```python
+from crawlerUtils.examples import *
+
+
+getDoubanTop250UseRegexExpression()
+```
+
 - 打印Python之禅, Selenium实现登录并用BeatifulSoup解析文本
+```python
+from crawlerUtils.examples import *
+
+
+loginAndPrintZens()
+```
+
 - 每天定时发送天气信息邮件, 使用了urlopen等函数
+```python
+from crawlerUtils.examples import *
+
+
+sendCityWeatherEveryDay()
+```
 
 
 ## 更新记录
-- V
+- V1.6.0
+更新内容: 集成gevent，支持协程，增加examples里的shiguang.py；集成csv、math;重构requestsAndBeautifulSoup.py及对应example，采用面向对象方式编写。
+
+- V1.5.2
 更新内容: 增加utils.log模块，加入moviedownload.py 多线程Windows64位版
 
 - V1.5.0 

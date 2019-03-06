@@ -1,5 +1,5 @@
 from .captchaRecognizeMain import CAPTCHA_SET, captchaRecognize
-from ..utils import getPostJson, captchaB64decode, SESSION, HEADERS
+from ..utils import Post, captchaB64decode
 import os
 import random
 import requests
@@ -13,7 +13,7 @@ CURRENT_DIR = os.path.dirname(__file__)
 CAPTCHA_SET_PATH = CURRENT_DIR + "/captcha_set"
 
 
-def getRequsetCaptcha(session, headers, telephone_number, dir_path=None, captcha_name="captcha"):
+def getRequsetCaptcha(headers, telephone_number, dir_path=None, captcha_name="captcha"):
     ''' 获取验证码 '''
     captcha_params = {
         "captcha_str": telephone_number,
@@ -21,8 +21,7 @@ def getRequsetCaptcha(session, headers, telephone_number, dir_path=None, captcha
 
     captcha_url = "https://h5.ele.me/restapi/eus/v3/captchas"
 
-    captcha_json = getPostJson(
-        session, captcha_url, headers=headers, jsons=captcha_params)
+    captcha_json = Post(captcha_url, headers=headers, jsons=captcha_params).json()
     captcha_hash = captcha_json["captcha_hash"]
     b64data = captcha_json['captcha_image']
     filepath, extension = captchaB64decode(b64data, captcha_name, dir_path)
@@ -48,8 +47,9 @@ def cropImage(binary_object, letters, extension, dir_path=".", captcha_name="cap
 
 def splitCaptcha(captcha_name="captcha"):
     ''' 请求并分割验证码, 将结果放入captcha_set目录，需要人工筛选放入对应的子目录 '''
-    headers = HEADERS
-    headers["referer"] = "https://h5.ele.me/login/"
+    headers = {
+        "referer": "https://h5.ele.me/login/"
+    }
     telephone_numbers = [x for x in range(10)]
     telephone_heads = ["1581", "1861", "1355", "1760"]
 
@@ -59,7 +59,7 @@ def splitCaptcha(captcha_name="captcha"):
         telephone_number += str(random.choice(telephone_numbers))
 
     # 请求验证码
-    filepath, extension, captcha_hash = getRequsetCaptcha(SESSION, headers, telephone_number,
+    filepath, extension, captcha_hash = getRequsetCaptcha(headers, telephone_number,
                                                           dir_path=CAPTCHA_SET_PATH, captcha_name=captcha_name)
 
     # 扫描验证码

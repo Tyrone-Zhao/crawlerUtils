@@ -15,7 +15,7 @@ def captchaB64decode(b64data, filename_unextension="b64temp", dir_path=None):
     if dir_path:
         filepath = dir_path + "/" + filename
     else:
-        filepath = os.path.dirname(__file__) + \
+        filepath = os.path.dirname(os.path.dirname(__file__)) + \
             "/captcha/captcha_set/" + filename
     with open(filepath, 'wb') as f:
         content_decode = base64.b64decode(head_and_content[1])

@@ -1,5 +1,5 @@
 from urllib.request import quote, unquote, urlopen
-from .requestAndBeautifulSoup import beautifulJson, getBSText
+from .requestAndBeautifulSoup import Crawler
 
 
 __all__ = [
@@ -33,7 +33,7 @@ def urllibOpenText(url, data=None, encoding="utf-8"):
 def urllibOpenJson(url, data=None, encoding="utf-8"):
     ''' 返回urllibOpenText及一些处理后的json '''
     text = urllibOpenText(url, data, encoding)
-    text_json = beautifulJson(text)
+    text_json = Crawler.beautifulJson(text)
 
     return text_json
 
@@ -43,5 +43,5 @@ def urllibOpenSoup(url, data=None, encoding="utf-8", parser="html.parser"):
             urllibOpenText(url, data=None, encoding="utf-8"), "html.parser"
         ) 
     '''
-    return getBSText(
+    return Crawler.getBSText(
         urllibOpenText(url, data=None, encoding="utf-8"), parser)
