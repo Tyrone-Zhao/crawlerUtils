@@ -1,5 +1,5 @@
 from urllib.request import quote, unquote, urlopen
-from .requestAndBeautifulSoup import Crawler
+from .utils import Crawler
 
 
 __all__ = [

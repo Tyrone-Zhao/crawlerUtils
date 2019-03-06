@@ -1,5 +1,5 @@
 # crawlerUtils
-Special gift for spiderman.
+Special gift for spiderman, Make crawler programming easier.
 
 ## Installation
 ```shell
@@ -7,6 +7,48 @@ pip install crawlerUtils
 ```
 
 ## Usages
+
+### crawlerUtils.utils.gevent and crawlerUtils.utils.csv
+```python
+from crawlerUtils.utils import QUEUE, geventIt, writeCsv, getSeleniumSoupHeadLess
+import time
+
+
+url_list = [
+    'http://www.mtime.com/top/tv/top100/',
+]
+url_list += [f"http://www.mtime.com/top/tv/top100/index-{str(x)}.html" for x in range(2, 11)]
+
+
+def crawler():
+    start = time.time()
+    content = ["剧名", "导演", "主演", "简介"]
+    while not QUEUE.empty():
+        url = QUEUE.get_nowait()
+        soup = getSeleniumSoupHeadLess(url)
+        contents = soup.find("ul", id="asyncRatingRegion").find_all("li")
+        for li in contents:
+            content_dict = {}
+            title = li.find("h2").text
+            content_dict[content[0]] = title
+            contents = li.find_all("p")
+            for i in range(0, min([3, len(contents)])):
+                if contents[i].text.strip():
+                    if not contents[i].text.strip()[0].isdigit():
+                        if contents[i].text[:2] in content:
+                            content_dict[contents[i].text[:2]] = contents[i].text
+                        else:
+                            content_dict[content[3]] = contents[i].text
+            writeCsv(dict_params=content_dict, filepath="shiguang.xls", fieldnames=["剧名", "导演", "主演", "简介"])
+    end = time.time()
+    print(end - start)
+
+
+def getShiGuang(coroutines_number=5):
+    writeCsv(fieldnames=["剧名", "导演", "主演", "简介"], filepath="shiguang.xls")
+    geventIt(url_list, coroutines_number, crawler)
+
+```
 
 ### crawlerUtils.utils.log
 result had be writen into all.log and error.log
@@ -69,7 +111,7 @@ def loginAndPrintZens():
 ### crawlerUtils.utils.requestAndBeautifulSoup and crawlerUtils.utils.excel
 ```python
 import time
-from ..utils import writeExcel, Get
+from crawlerUtils.utils import writeExcel, Get
 
 
 def _getAuthorNames(name):
@@ -167,7 +209,7 @@ def getZhiHuArticle():
 
 ### crawlerUtils.utils.urllib and crawlerUtils.utils.mail and crawlerUtils.utils.schedule
 ```python
-from ..utils import (
+from crawlerUtils.utils import (
     urllibOpenJson,
     urlencode,
     urllibOpenSoup,
@@ -275,8 +317,21 @@ from crawlerUtils.examples import *
 sendCityWeatherEveryDay()
 ```
 
+- 爬取时光网top100电影信息，使用了协程gevent库和写csv函数
+```python
+from gevent import monkey
+monkey.patch_all()
+from crawlerUtils.examples import getShiGuang
+
+
+getShiGuang()
+```
+
 
 ## 更新记录
+- Future
+更新内容: utils全部文件改成基础类，由utils/utils.py里的Crawler继承; 集成Requests-html，增加多进程模块、分布式等; 欢迎提交Pull Request。
+
 - V1.6.0
 更新内容: 集成gevent，支持协程，增加examples里的shiguang.py；集成csv、math;重构requestsAndBeautifulSoup.py及对应example，采用面向对象方式编写。
 

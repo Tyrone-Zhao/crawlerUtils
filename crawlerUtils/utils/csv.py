@@ -10,18 +10,19 @@ def writeCsv(row=None, dict_params=None, fieldnames=None, filepath=None,
     if filepath != None and fieldnames == None:
         with open(filepath, mode, newline=newline, encoding=encoding, *args, **kwargs) as f:
             writer = csv.writer(f)
-        return writer
-    elif filepath != None and fieldnames != None:
+    elif filepath != None and fieldnames != None and dict_params is None:
         with open(filepath, mode, newline=newline, encoding=encoding, *args, **kwargs) as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
-        return writer
-    if writer != None and row != None:
-        writer.writerow(row)
-        return writer
-    if writer != None and dict_params != None:
-        writer.writerow(dict_params)
-        return writer
+    if filepath != None and row != None:
+        with open(filepath, "a", newline=newline, encoding=encoding, *args, **kwargs) as f:
+            writer = csv.writer(f)
+            writer.writerow(row)
+    if filepath != None and dict_params != None:
+        with open(filepath, "a", newline=newline, encoding=encoding, *args, **kwargs) as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writerow(dict_params)
+
 
 
 def readCsv(filepath=None, isDictReader=False, mode="r", newline="", encoding="utf-8-sig", *args, **kwargs):
