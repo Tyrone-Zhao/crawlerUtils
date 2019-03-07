@@ -2,7 +2,7 @@ import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import WebDriverException
-from .utils import Crawler
+from .requests import Crawler
 from .decorator import wait
 
 

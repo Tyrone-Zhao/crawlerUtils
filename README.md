@@ -1,16 +1,30 @@
 # crawlerUtils
-Special gift for spiderman, Make crawler programming easier.
+Special gift for spiderman, make spinning a web easier.
 
 ## Installation
 ```shell
-pip install crawlerUtils
+pip install --user --upgrade crawlerUtils
 ```
 
 ## Usages
+**crawlerUtils.utils.requests contains the methods:**
+- Get(url).text == requests.get(url).text
+- Get(url).json ~= json.loads(requests.get(url).text)
+- Get(url).soup ~= BeautifulSoup(requests.get(url).text, "html.parser")
+- Get(url).html == request-html.get(url).html
+- Get(url).ahtml ~= await request-html.get(url).html
+- Get(url).atext ~= await request-html.get(url).text
+- Get(url).ajson ~= await json.loads(request-html.get(url).text)
+- Get(url).asoup ~= await BeautifulSoup(request-html.get(url).text, "html.parser")
+- Get(url).rhtml ~= await request-html.get(url).html.arender()
+- Get(url).rtext ~= await request-html.get(url).text.arender()
+- Get(url).rjson ~= await json.loads(request-html.get(url).text.arender())
+- Get(url).rsoup ~= await BeautifulSoup(request-html.get(url).text.arender(), "html.parser")
 
-### crawlerUtils.utils.gevent and crawlerUtils.utils.csv
+
+### crawlerUtils.utils.requests and crawlerUtils.utils.csv
 ```python
-from crawlerUtils.utils import QUEUE, geventIt, writeCsv, getSeleniumSoupHeadLess
+from crawlerUtils import writeCsv, Get
 import time
 
 
@@ -20,18 +34,17 @@ url_list = [
 url_list += [f"http://www.mtime.com/top/tv/top100/index-{str(x)}.html" for x in range(2, 11)]
 
 
-def crawler():
-    start = time.time()
+async def crawler():
     content = ["剧名", "导演", "主演", "简介"]
-    while not QUEUE.empty():
-        url = QUEUE.get_nowait()
-        soup = getSeleniumSoupHeadLess(url)
-        contents = soup.find("ul", id="asyncRatingRegion").find_all("li")
+    while url_list:
+        url = url_list.pop(0)
+        rhtml = await Get(url).rhtml
+        contents = rhtml.find("#asyncRatingRegion", first=True).find("li")
         for li in contents:
             content_dict = {}
-            title = li.find("h2").text
+            title = li.find("h2", first=True).text
             content_dict[content[0]] = title
-            contents = li.find_all("p")
+            contents = li.find("p")
             for i in range(0, min([3, len(contents)])):
                 if contents[i].text.strip():
                     if not contents[i].text.strip()[0].isdigit():
@@ -39,21 +52,54 @@ def crawler():
                             content_dict[contents[i].text[:2]] = contents[i].text
                         else:
                             content_dict[content[3]] = contents[i].text
-            writeCsv(dict_params=content_dict, filepath="shiguang.xls", fieldnames=["剧名", "导演", "主演", "简介"])
-    end = time.time()
-    print(end - start)
+            writeCsv(fieldnames=["剧名", "导演", "主演", "简介"], filepath="shiguang.csv", dict_params=content_dict)
+    return url
+   
+start = time.time()
+writeCsv(fieldnames=["剧名", "导演", "主演", "简介"], filepath="shiguang.csv")
+results = Get.runAsync(crawler, 5)
+for result in results:
+    print(result)
+end = time.time()
+print(end - start)
+
+```
+
+### crawlerUtils.utils.gevent and crawlerUtils.utils.csv
+```python
+from gevent import monkey
+monkey.patch_all()
+from crawlerUtils import QUEUE, geventIt, Get, writeCsv
 
 
-def getShiGuang(coroutines_number=5):
-    writeCsv(fieldnames=["剧名", "导演", "主演", "简介"], filepath="shiguang.xls")
-    geventIt(url_list, coroutines_number, crawler)
+url_list = [QUEUE.put_nowait(
+    f"http://www.boohee.com/food/group/{str(i)}?page={str(j)}") for i in range(1, 11) for j in range(1, 11)]
+url_list2 = [QUEUE.put_nowait(
+    f"http://www.boohee.com/food/view_menu?page={str(i)}") for i in range(1, 11)]
+url_list += url_list2
 
+
+def crawler():
+    while not QUEUE.empty():
+        url = QUEUE.get_nowait()
+        res_soup = Get(url).soup
+        foods = res_soup.find_all('li', class_='item clearfix')
+        for i in range(0, len(foods)):
+            food_name = foods[i].find_all('a')[1]['title']
+            print(foods[i].find_all("a"))
+            food_url = 'http://www.boohee.com' + foods[i].find_all('a')[1]['href']
+            food_calorie = foods[i].find('p').text
+            writeCsv(filepath="薄荷.csv", row=[food_name, food_url, food_calorie])
+
+writeCsv(filepath="薄荷.csv")
+writeCsv(filepath="薄荷.csv", row=["食物名称", "食物链接", "食物热量"])
+geventIt(crawler, 5)
 ```
 
 ### crawlerUtils.utils.log
 result had be writen into all.log and error.log
 ```python
-from crawlerUtils.utils import setLog
+from crawlerUtils import setLog
 
 logger = setLog()
 logger.debug("这是一条debug信息")
@@ -86,7 +132,7 @@ NoneType: None
 
 ### crawlerUtils.utils.selenium
 ```python
-from crawlerUtils.utils import loginNoCaptcha, getMCFunc, Crawler
+from crawlerUtils import loginNoCaptcha, getMCFunc, Crawler
 
 
 def loginAndPrintZens():
@@ -108,10 +154,10 @@ def loginAndPrintZens():
     print(f"\n中文版Python之禅：\n{chinese_zen.text}\n")
 ```
 
-### crawlerUtils.utils.requestAndBeautifulSoup and crawlerUtils.utils.excel
+### crawlerUtils.utils.requests and crawlerUtils.utils.excel
 ```python
 import time
-from crawlerUtils.utils import writeExcel, Get
+from crawlerUtils import writeExcel, Get
 
 
 def _getAuthorNames(name):
@@ -127,7 +173,7 @@ def _getAuthorNames(name):
 
     author_url = "https://www.zhihu.com/search"
 
-    author_soup = Get(author_url, headers=author_headers, params=author_params).soup()
+    author_soup = Get(author_url, headers=author_headers, params=author_params).soup
     author_name_json = Get.beautifulJson(
         author_soup.find("script", id="js-initialData").text
     )
@@ -161,7 +207,7 @@ def _getOneAuthorsArticles(author, wb):
 
         articles_url = f"https://www.zhihu.com/api/v4/members/{author}/articles"
 
-        articles_res_json = Get(articles_url, headers=headers, params=articles_params).json()
+        articles_res_json = Get(articles_url, headers=headers, params=articles_params).json
 
         articles = articles_res_json["data"]
         for article in articles:
@@ -209,7 +255,7 @@ def getZhiHuArticle():
 
 ### crawlerUtils.utils.urllib and crawlerUtils.utils.mail and crawlerUtils.utils.schedule
 ```python
-from crawlerUtils.utils import (
+from crawlerUtils import (
     urllibOpenJson,
     urlencode,
     urllibOpenSoup,
@@ -270,6 +316,7 @@ print(crawlerUtils.examples.__all__)
 
 包括：
 - 获取QQ音乐某个歌手的歌曲信息和评论
+
 ```python
 from crawlerUtils.examples import *
 
@@ -278,6 +325,7 @@ getQQSinger()
 ```
 
 - 获取知乎某个作者的所有文章
+
 ```python
 from crawlerUtils.examples import *
 
@@ -286,6 +334,7 @@ getZhiHuArticle()
 ```
 
 - 登陆饿了么并获取附近餐厅, 使用了向量空间进行验证码识别
+
 ```python
 from crawlerUtils.examples import *
 
@@ -294,6 +343,7 @@ getElemeDishes()
 ```
 
 - 获取豆瓣top250电影信息, 使用requests+正则表达式
+
 ```python
 from crawlerUtils.examples import *
 
@@ -302,6 +352,7 @@ getDoubanTop250UseRegexExpression()
 ```
 
 - 打印Python之禅, Selenium实现登录并用BeatifulSoup解析文本
+
 ```python
 from crawlerUtils.examples import *
 
@@ -310,6 +361,7 @@ loginAndPrintZens()
 ```
 
 - 每天定时发送天气信息邮件, 使用了urlopen等函数
+
 ```python
 from crawlerUtils.examples import *
 
@@ -317,23 +369,32 @@ from crawlerUtils.examples import *
 sendCityWeatherEveryDay()
 ```
 
-- 爬取时光网top100电影信息，使用了协程gevent库和写csv函数
+- 爬取薄荷网十一类食物的热量信息，使用了协程gevent库和写csv函数
+
 ```python
 from gevent import monkey
 monkey.patch_all()
-from crawlerUtils.examples import getShiGuang
+from crawlerUtils.examples import runBoheGevent
 
 
-getShiGuang()
+runBoheGevent()
 ```
+
+### Resources：
+requests: https://github.com/kennethreitz/requests
+bs4: https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+requests-html: https://github.com/kennethreitz/requests-html
 
 
 ## 更新记录
 - Future
-更新内容: utils全部文件改成基础类，由utils/utils.py里的Crawler继承; 集成Requests-html，增加多进程模块、分布式等; 欢迎提交Pull Request。
+更新内容: utils全部文件改成基础类，由utils/utils.py里的Crawler继承; 增加多进程模块、分布式等; 欢迎提交Pull Request。
+
+- V1.7.0
+更新内容: 集成了requests-html，支持并发和JavaScript解析(如r = Get(url).html; r.render();r.find();r.search();r.xpath())，重写examples里的shiguang.py；增加了utils.request里的async方法.
 
 - V1.6.0
-更新内容: 集成gevent，支持协程，增加examples里的shiguang.py；集成csv、math;重构requestsAndBeautifulSoup.py及对应example，采用面向对象方式编写。
+更新内容: 集成gevent，支持协程，增加examples里的shiguang.py；集成csv、math;重构utils.py及对应example，采用面向对象方式编写。
 
 - V1.5.2
 更新内容: 增加utils.log模块，加入moviedownload.py 多线程Windows64位版
@@ -346,3 +407,5 @@ getShiGuang()
 
 - V1.4.1 
 更新内容: 封装了一些BeautifulSoup和Selenium函数、增加打印python之禅的例子
+
+

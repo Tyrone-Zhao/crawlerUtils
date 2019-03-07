@@ -10,9 +10,11 @@ __all__ = ["QUEUE", "geventIt"]
 QUEUE = Queue()
 
 
-def geventIt(urls, number, func, *arg, **kwargs):
-    for u in urls:
-        QUEUE.put_nowait(u)
+def geventIt(func, number, urls=None, timeout=20, *arg, **kwargs):
+    if urls != None:
+        for u in urls:
+            print(u)
+            QUEUE.put_nowait(u)
 
     gevent.joinall(
-        [gevent.spawn(func, *arg, **kwargs) for i in range(number)])
+        [gevent.spawn(func, *arg, **kwargs) for i in range(number)], timeout=timeout)

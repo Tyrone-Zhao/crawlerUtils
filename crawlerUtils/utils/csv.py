@@ -7,7 +7,7 @@ __all__ = ["writeCsv", "readCsv"]
 def writeCsv(row=None, dict_params=None, fieldnames=None, filepath=None,
              writer=None, mode="w", newline="", encoding="utf-8-sig", *args, **kwargs):
     ''' 写csv文件 '''
-    if filepath != None and fieldnames == None:
+    if filepath != None and fieldnames == None and row == None:
         with open(filepath, mode, newline=newline, encoding=encoding, *args, **kwargs) as f:
             writer = csv.writer(f)
     elif filepath != None and fieldnames != None and dict_params is None:
