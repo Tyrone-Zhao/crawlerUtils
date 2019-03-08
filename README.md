@@ -47,7 +47,13 @@ Also some of the Classes maybe inherite BaseCrawler Class in utils/base.py
 - ...
 - Post.cookiesToFile() == login in and save cookies locally
 
+## What can this Crawler do?
+```python
+from crawlerUtils import Crawler
 
+
+print(dir(Crawler))
+```
 
 ## Coding Examples
 
