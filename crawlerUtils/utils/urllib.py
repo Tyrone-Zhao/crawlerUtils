@@ -45,4 +45,4 @@ class Urllib(BaseCrawler):
             ) 
         '''
         return self.beautifulSoup(
-            self.urllibOpenText(url, data=None, encoding="utf-8"), parser)
+            self.urllibOpenText(url, data=None, encoding=encoding), parser)

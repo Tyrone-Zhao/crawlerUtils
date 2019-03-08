@@ -86,7 +86,7 @@ class Selenium(BaseCrawler):
 
         # 登录
         self.loginNoCaptchaAction(mc_username, mc_password,
-                             mc_submit_button, driver, username, password)
+                                  mc_submit_button, driver, username, password)
 
         return driver
 
@@ -96,11 +96,11 @@ class Selenium(BaseCrawler):
                                      driver, username, password):
         """ 无头模式完成登录动作 """
         # 登录
-        username_element = getMCFunc(driver, mc_username[0])(
+        username_element = self.locateElement(driver, mc_username[0])(
             mc_username[1])
-        password_element = getMCFunc(driver, mc_password[0])(
+        password_element = self.locateElement(driver, mc_password[0])(
             mc_password[1])
-        submit_button = getMCFunc(driver, mc_submit_button[0])(
+        submit_button = self.locateElement(driver, mc_submit_button[0])(
             mc_submit_button[1])
         username_element.clear()
         password_element.clear()
@@ -116,13 +116,13 @@ class Selenium(BaseCrawler):
         mc_password = method_params[1]
         mc_submit_button = method_params[2]
         # 进入首页
-        driver = getDriverHeadLess()
+        driver = self.getDriverHeadLess()
         driver.get(url)
         time.sleep(2)
 
         # 登录
-        loginNoCaptchaAction(mc_username, mc_password,
-                             mc_submit_button, driver, username, password)
+        self.loginNoCaptchaAction(mc_username, mc_password,
+                                  mc_submit_button, driver, username, password)
 
         return driver
 
@@ -131,13 +131,13 @@ class Selenium(BaseCrawler):
         ''' 返回Selenium HeadLess Chrome Driver '''
         options = Options()
         options.add_argument('--headless')
-        driver = getDriver(options=options)
+        driver = self.getDriver(options=options)
         return driver
 
     @classmethod
     def getSeleniumText(self, url, sleep_time=2):
         """ 获取driver.page_source """
-        driver = getDriver()
+        driver = self.getDriver()
         driver.get(url)
         time.sleep(sleep_time)
 
@@ -146,7 +146,7 @@ class Selenium(BaseCrawler):
     @classmethod
     def getSeleniumJson(self, url, sleep_time=2):
         """ 获取json.loads(driver.page_source) """
-        driver = getDriver()
+        driver = self.getDriver()
         driver.get(url)
         time.sleep(sleep_time)
 
@@ -155,16 +155,16 @@ class Selenium(BaseCrawler):
     @classmethod
     def getSeleniumSoup(self, url, parser="html.parser", sleep_time=2):
         """ 获取Beatifule(driver.page_source, "html.parser") """
-        driver = getDriver()
+        driver = self.getDriver()
         driver.get(url)
         time.sleep(sleep_time)
 
-        return self.getBSText(driver.page_source, parser)
+        return self.beautifulSoup(driver.page_source, parser)
 
     @classmethod
     def getSeleniumTextHeadLess(self, url, sleep_time=2):
         """ 无头模式获取driver.page_source """
-        driver = getDriverHeadLess()
+        driver = self.getDriverHeadLess()
         driver.get(url)
         time.sleep(sleep_time)
 
@@ -173,7 +173,7 @@ class Selenium(BaseCrawler):
     @classmethod
     def getSeleniumJsonHeadLess(self, url, sleep_time=2):
         """ 无头模式获取json.loads(driver.page_source) """
-        driver = getDriverHeadLess()
+        driver = self.getDriverHeadLess()
         driver.get(url)
         time.sleep(sleep_time)
 
@@ -182,9 +182,8 @@ class Selenium(BaseCrawler):
     @classmethod
     def getSeleniumSoupHeadLess(self, url, parser="html.parser", sleep_time=2):
         """ 无头模式获取Beatifule(driver.page_source, "html.parser") """
-        driver = getDriverHeadLess()
+        driver = self.getDriverHeadLess()
         driver.get(url)
         time.sleep(sleep_time)
 
-        return self.getBSText(driver.page_source, parser)
-
+        return self.beautifulSoup(driver.page_source, parser)

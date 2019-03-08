@@ -45,7 +45,7 @@ Also some of the Classes maybe inherite BaseCrawler Class in utils/base.py
 - Post(url).text == requests.post(url).text
 - Post(url).rtext ~= webdriver.Chrome().get(url).page_source
 - ...
-- Post.cookiesToFile() == login in and save cookies locally
+- Post.cookiesToFile(filepath='crawlerUtilsCookies.txt') == login in and save cookies locally
 
 ## What else can this Crawler do?
 ```python
@@ -56,6 +56,31 @@ print(dir(Crawler))
 ```
 
 ## Coding Examples
+
+### Deal JavaScript in Iframe
+```python
+from crawlerUtils import Get
+import re
+
+
+def runDangdangBook():
+    ''' 从当当图书获取前3页书籍的信息 '''
+    start_urls = []
+    for x in range(3):
+        url = "http://bang.dangdang.com/books/bestsellers/01.00.00.00.00.00-year-2018-0-1-{}".format(x+1)
+        start_urls.append(url)
+
+    for url in start_urls:
+        text = Get.urllibOpenText(url, encoding="gb18030")
+        # print(text[text.find("活着")-1000:])
+        ul = re.findall('<ul class="bang_list clearfix bang_list_mode".*?/ul>', text, flags=re.S)[0]
+        books = Get.beautifulSoup(ul).find_all("li")
+        for book in books:
+            name = book.find("div", {"class": "name"}).text
+            author = book.find("div", {"class": "publisher_info"}).text
+            price = book.find("span", {"class": "price_n"}).text
+            print(f"书名: {name}\n作者：{author}\n价格：{price}\n")
+```
 
 ### Get(url).html
 ```python
@@ -443,6 +468,15 @@ from crawlerUtils.examples import *
 
 
 runShiGuang()
+```
+
+- 爬取当当图书的图书信息，处理iframe中的javascript
+
+```python
+from crawlerUtils.examples import *
+
+
+runDangdangBook()
 ```
 
 ### Documentation：

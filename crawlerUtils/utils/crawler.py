@@ -95,8 +95,8 @@ class Crawler(Selenium, Csv, Gevent, Geohash, Time, Html, Excel, Decorator, Mail
 
 
 class Get(Crawler):
-    def __init__(self, url="", headers={}, params={}, data={}, jsons={},
-                 parser="html.parser", encoding="utf-8", async_funcs=[], *args, **kwargs):
+    def __init__(self, url="", *args, headers={}, params={}, data={}, jsons={},
+                 parser="html.parser", encoding="utf-8", async_funcs=[], **kwargs):
         super().__init__()
         self.url = url
         self.add_headers = headers
@@ -265,8 +265,8 @@ class Get(Crawler):
 
 
 class Post(Crawler):
-    def __init__(self, url="", headers={}, params={}, data={}, jsons={},
-                 parser="html.parser", encoding="utf-8", async_funcs=[], *args, **kwargs):
+    def __init__(self, url="", *args, headers={}, params={}, data={}, jsons={},
+                 parser="html.parser", encoding="utf-8", async_funcs=[], **kwargs):
         super().__init__()
         self.url = url
         self.add_headers = headers
