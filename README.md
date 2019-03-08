@@ -59,24 +59,33 @@ print(dir(Crawler))
 
 ### Deal JavaScript in Iframe
 ```python
-from crawlerUtils import Get
+start_urls = []
+for x in range(3):
+    url = "http://bang.dangdang.com/books/bestsellers/01.00.00.00.00.00-year-2018-0-1-{}".format(
+        x+1)
+    start_urls.append(url)
 
 
-def runDangdangBook():
+async def DangdangBook():
     ''' 从当当图书获取前3页书籍的信息 '''
-    start_urls = []
-    for x in range(3):
-        url = "http://bang.dangdang.com/books/bestsellers/01.00.00.00.00.00-year-2018-0-1-{}".format(x+1)
-        start_urls.append(url)
+    while start_urls:
+        url = start_urls.pop(0)
+        try:
+            html = await Get(url, encoding="gb18030").ahtml
+            books = html.find("ul.bang_list", first=True).find("li")
+            for book in books:
+                iterm = {}
+                iterm["name"] = book.find("div.name", first=True).text
+                iterm["author"] = book.find("div.publisher_info", first=True).text
+                iterm["price"] = book.find("span.price_n", first=True).text
+                print(iterm)
+        except BaseException:
+            pass
 
-    for url in start_urls:
-        soup = Get(url, encoding="gb18030").soup
-        books = soup.find("ul", {"class": "bang_list"}).find_all("li")
-        for book in books:
-            name = book.find("div", {"class": "name"}).text
-            author = book.find("div", {"class": "publisher_info"}).text
-            price = book.find("span", {"class": "price_n"}).text
-            print(f"书名: {name}\n作者：{author}\n价格：{price}\n")
+
+def runDangdangBook(number_asynchronous=3):
+    ''' 从当当图书获取前3页书籍的信息 '''
+    Get.asyncRun(DangdangBook, number_asynchronous)
 ```
 
 ### Get(url).html
