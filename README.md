@@ -208,7 +208,7 @@ def runLoginAndPrintZens():
     print(f"\n中文版Python之禅：\n{chinese_zen.text}\n")
 ```
 
-### crawlerUtils.utils.requests and crawlerUtils.utils.excel
+### crawlerUtils.utils.crawler and crawlerUtils.utils.excel
 ```python
 import time
 from crawlerUtils import Get
