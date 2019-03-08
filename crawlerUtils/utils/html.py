@@ -2,10 +2,13 @@ import html
 
 
 __all__ = [
-    "unescapeHtml"
+    "Html"
 ]
 
 
-def unescapeHtml(string):
-    ''' 返回html.unescape(string) '''
-    return html.unescape(string)
+class Html():
+
+    @classmethod
+    def htmlUnescape(self, string):
+        ''' 返回html.unescape(string) '''
+        return html.unescape(string)

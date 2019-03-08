@@ -8,33 +8,48 @@ pip install --user --upgrade crawlerUtils
 
 ## Usages
 **crawlerUtils.utils.requests contains the methods:**
-crawler is the BaseClass, which is inherited by Get Class and Post Class
-- Crawler.addHeaders(value) -- add the requests headers
-- Crawler.setHeaders(value) -- reset the requests headers
+
+Crawler is the BaseClass, which is inherited by Get Class and Post Class in utils/crawler.py.
+but the Classes in utils/*others.py is inherited by Crawler.
+However some of the Classes in utils/*.py maybe inherited BaseCrawler Class in utils/base.py
+
+- Crawler.headersAdd(value) -- add the requests headers
+- Crawler.headersSet(value) -- reset the requests headers
 - Crawler.beautifulJson(text) -- deal the text to json
-- Crawler.getBSText(text, parser="html.parser") -- return BeautifulSoup object
-- Crawler.stringCookiesToDict(cookie) -- get cookies to dict from type string cookies
-- Crawler.setCookiesFromDict(cookies_dict) -- set session cookies from dict
-- Crawler.readCookies(filepath="", cookies="") -- set session cookies from txt
-- Crawler.parserHtml(doc) -- read string object and return requests-html HTML object
-- Crawler.runAsync(func, number, *args, **kwargs) -- run async requests-html Aysnc func
+- Crawler.beautifulSoup(text, parser="html.parser") -- return BeautifulSoup object
+- Crawler.cookiesStringToDict(cookie) -- get cookies to dict from type string cookies
+- Crawler.cookiesSetFromDict(cookies_dict) -- set session cookies from dict
+- Crawler.cookiesRead(filepath="", cookies="") -- set session cookies from txt
+- Crawler.htmlParser(doc) -- read string object and return requests-html HTML object
+- Crawler.asyncRun(func, number, *args, **kwargs) -- run async requests-html Aysnc func
 
 - Get(url).text == requests.get(url).text
+- Get(url).rtext ~= webdriver.Chrome().get(url).page_source
+- Get(url).rhtext ~= webdriver.Chrome().headless.get(url).page_source
 - Get(url).json ~= json.loads(requests.get(url).text)
+- Get(url).rjson ~= json.loads(webdriver.Chrome().get(url).page_source)
+- Get(url).rhjson ~= json.loads(webdriver.Chrome().headless.get(url).page_source)
 - Get(url).soup ~= BeautifulSoup(requests.get(url).text, "html.parser")
+- Get(url).rsoup ~= BeautifulSoup(webdriver.Chrome().get(url).page_source, "html.parser")
+- Get(url).rhsoup ~= BeautifulSoup(webdriver.Chrome().headless.get(url).page_source, "html.parser")
 - Get(url).html == request-html.get(url).html
+- Get(url).rhtml ~= request-html.get(url).html.render().html
 - Get(url).ahtml ~= await request-html.get(url).html
 - Get(url).atext ~= await request-html.get(url).text
 - Get(url).ajson ~= await json.loads(request-html.get(url).text)
 - Get(url).asoup ~= await BeautifulSoup(request-html.get(url).text, "html.parser")
-- Get(url).rhtml ~= await request-html.get(url).html.arender()
-- Get(url).rtext ~= await request-html.get(url).text.arender()
-- Get(url).rjson ~= await json.loads(request-html.get(url).text.arender())
-- Get(url).rsoup ~= await BeautifulSoup(request-html.get(url).text.arender(), "html.parser")
+- Get(url).arhtml ~= await request-html.get(url).html.arender()
+- Get(url).artext ~= await request-html.get(url).text.arender()
+- Get(url).arjson ~= await json.loads(request-html.get(url).text.arender())
+- Get(url).arsoup ~= await BeautifulSoup(request-html.get(url).text.arender(), "html.parser")
 - Post(url).text == requests.post(url).text
-- Post(url).json ~= json.loads(requests.post(url).text)
+- Post(url).rtext ~= webdriver.Chrome().get(url).page_source
 - ...
+- Post.cookiesToFile() == login in and save cookies locally
 
+
+
+## Coding Examples
 
 ### Get(url).html
 ```python
@@ -56,8 +71,11 @@ for tr in trs:
 
 ### crawlerUtils.utils.requests and crawlerUtils.utils.csv
 ```python
-from crawlerUtils import writeCsv, Get
+from crawlerUtils import Get
 import time
+
+
+__all__ = ["getShiGuang"]
 
 
 url_list = [
@@ -70,7 +88,7 @@ async def crawler():
     content = ["剧名", "导演", "主演", "简介"]
     while url_list:
         url = url_list.pop(0)
-        rhtml = await Get(url).rhtml
+        rhtml = await Get(url).arhtml
         contents = rhtml.find("#asyncRatingRegion", first=True).find("li")
         for li in contents:
             content_dict = {}
@@ -84,56 +102,60 @@ async def crawler():
                             content_dict[contents[i].text[:2]] = contents[i].text
                         else:
                             content_dict[content[3]] = contents[i].text
-            writeCsv(fieldnames=["剧名", "导演", "主演", "简介"], filepath="shiguang.csv", dict_params=content_dict)
+            Get.csvWrite(fieldnames=["剧名", "导演", "主演", "简介"], filepath="shiguang.csv", dict_params=content_dict)
     return url
-   
-start = time.time()
-writeCsv(fieldnames=["剧名", "导演", "主演", "简介"], filepath="shiguang.csv")
-results = Get.runAsync(crawler, 5)
-for result in results:
-    print(result)
-end = time.time()
-print(end - start)
 
+
+def runShiGuang(coroutine_number=5):
+    ''' 使用协程爬取时光电影网top100电影信息 '''
+    start = time.time()
+    Get.csvWrite(fieldnames=["剧名", "导演", "主演", "简介"], filepath="shiguang.csv")
+    results = Get.asyncRun(crawler, coroutine_number)
+    for result in results:
+        print(result)
+    end = time.time()
+    print(end - start)
 ```
 
 ### crawlerUtils.utils.gevent and crawlerUtils.utils.csv
 ```python
 from gevent import monkey
 monkey.patch_all()
-from crawlerUtils import QUEUE, geventIt, Get, writeCsv
+from crawlerUtils import Get
 
 
-url_list = [QUEUE.put_nowait(
+url_list = [Get.queue.put_nowait(
     f"http://www.boohee.com/food/group/{str(i)}?page={str(j)}") for i in range(1, 11) for j in range(1, 11)]
-url_list2 = [QUEUE.put_nowait(
+url_list2 = [Get.queue.put_nowait(
     f"http://www.boohee.com/food/view_menu?page={str(i)}") for i in range(1, 11)]
 url_list += url_list2
 
 
 def crawler():
-    while not QUEUE.empty():
-        url = QUEUE.get_nowait()
+    while not Get.queue.empty():
+        url = Get.queue.get_nowait()
         res_soup = Get(url).soup
         foods = res_soup.find_all('li', class_='item clearfix')
         for i in range(0, len(foods)):
             food_name = foods[i].find_all('a')[1]['title']
-            print(foods[i].find_all("a"))
+            print(food_name)
             food_url = 'http://www.boohee.com' + foods[i].find_all('a')[1]['href']
             food_calorie = foods[i].find('p').text
-            writeCsv(filepath="薄荷.csv", row=[food_name, food_url, food_calorie])
+            Get.csvWrite(filepath="薄荷.csv", row=[food_name, food_url, food_calorie])
 
-writeCsv(filepath="薄荷.csv")
-writeCsv(filepath="薄荷.csv", row=["食物名称", "食物链接", "食物热量"])
-geventIt(crawler, 5)
+
+def runBoheGevent():
+    Get.csvWrite(filepath="薄荷.csv")
+    Get.csvWrite(filepath="薄荷.csv", row=["食物名称", "食物链接", "食物热量"])
+    Get.geventIt(crawler, 5)
 ```
 
 ### crawlerUtils.utils.log
 result had be writen into all.log and error.log
 ```python
-from crawlerUtils import setLog
+from crawlerUtils import Crawler
 
-logger = setLog()
+logger = Crawler.logSet()
 logger.debug("这是一条debug信息")
 logger.info("这是一条info信息")
 logger.warning("这是一条warning信息")
@@ -164,10 +186,10 @@ NoneType: None
 
 ### crawlerUtils.utils.selenium
 ```python
-from crawlerUtils import loginNoCaptcha, getMCFunc, Crawler
+from crawlerUtils import Get
 
 
-def loginAndPrintZens():
+def runLoginAndPrintZens():
     ''' 实现登录动作并打印中英文版python之禅 '''
     url = "https://localprod.pandateacher.com/python-manuscript/hello-spiderman/"
     method_params = [
@@ -178,10 +200,10 @@ def loginAndPrintZens():
     username = "酱酱"
     password = "酱酱"
 
-    driver = loginNoCaptcha(url, method_params, username, password)
-    zens = getMCFunc(driver, "ids")("p")
-    english_zen = Crawler.getBSText(zens[0].text)
-    chinese_zen = Crawler.getBSText(zens[1].text)
+    driver = Get.loginNoCaptcha(url, method_params, username, password)
+    zens = Get.locateElement(driver, "ids")("p")
+    english_zen = Get.beautifulSoup(zens[0].text)
+    chinese_zen = Get.beautifulSoup(zens[1].text)
     print(f"英文版Python之禅：\n{english_zen.text}\n")
     print(f"\n中文版Python之禅：\n{chinese_zen.text}\n")
 ```
@@ -189,8 +211,7 @@ def loginAndPrintZens():
 ### crawlerUtils.utils.requests and crawlerUtils.utils.excel
 ```python
 import time
-from crawlerUtils import writeExcel, Get
-
+from crawlerUtils import Get
 
 def _getAuthorNames(name):
     """ 获取作者名字 """
@@ -215,10 +236,10 @@ def _getAuthorNames(name):
 
 def _getOneAuthorsArticles(author, wb):
     """ 爬取一个作者的所有文章 """
-    ws = writeExcel(workbook=wb, sheetname=f"{author}Articles")
-    writeExcel(0, 0, label="文章名", worksheet=ws)
-    writeExcel(0, 1, label="文章链接", worksheet=ws)
-    writeExcel(0, 2, label="文章摘要", worksheet=ws)
+    ws = Get.excelWrite(workbook=wb, sheetname=f"{author}Articles")
+    Get.excelWrite(0, 0, label="文章名", worksheet=ws)
+    Get.excelWrite(0, 1, label="文章链接", worksheet=ws)
+    Get.excelWrite(0, 2, label="文章摘要", worksheet=ws)
 
     headers = {
         "referer": f"https://www.zhihu.com/people/{author}/posts"
@@ -248,9 +269,9 @@ def _getOneAuthorsArticles(author, wb):
             article_url = article["url"]
             article_excerpt = article["excerpt"]
             print(article_title)
-            writeExcel(article_nums, 0, label=article_title, worksheet=ws)
-            writeExcel(article_nums, 1, label=article_url, worksheet=ws)
-            writeExcel(article_nums, 2, label=article_excerpt, worksheet=ws)
+            Get.excelWrite(article_nums, 0, label=article_title, worksheet=ws)
+            Get.excelWrite(article_nums, 1, label=article_url, worksheet=ws)
+            Get.excelWrite(article_nums, 2, label=article_excerpt, worksheet=ws)
 
         offset += 20
         headers["referer"] = f"https://www.zhihu.com/people/{author}/posts?page={page_num}"
@@ -265,10 +286,10 @@ def _getOneAuthorsArticles(author, wb):
         #     break
 
 
-def getZhiHuArticle():
+def runZhiHuArticle():
     """ 获取一个知乎作者的所有文章名称、链接、及摘要，并存到Excel表里 """
     # Excel
-    wb = writeExcel(encoding='ascii')
+    wb = Get.excelWrite(encoding='ascii')
 
     # 用户输入知乎作者名
     name = input("请输入作者的名字：")
@@ -287,14 +308,7 @@ def getZhiHuArticle():
 
 ### crawlerUtils.utils.urllib and crawlerUtils.utils.mail and crawlerUtils.utils.schedule
 ```python
-from crawlerUtils import (
-    urllibOpenJson,
-    urlencode,
-    urllibOpenSoup,
-    sendMailInput,
-    sendMail,
-    regularFuncEveryDayTime,
-)
+from crawlerUtils import Get
 import re
 
 
@@ -303,8 +317,8 @@ def queryChineseWeather(city_name="广州"):
     while True:
         if not city_name:
             city_name = input("请问要查询哪里的天气：")
-        city_url = f"http://toy1.weather.com.cn/search?cityname={urlencode(city_name)}"
-        city_json = urllibOpenJson(city_url)
+        city_url = f"http://toy1.weather.com.cn/search?cityname={Get.urlencode(city_name)}"
+        city_json = Get.urllibOpenJson(city_url)
 
         if city_json:
             if city_json[0].get("ref"):
@@ -316,44 +330,48 @@ def queryChineseWeather(city_name="广州"):
             continue
 
         weather_url = f"http://www.weather.com.cn/weather1d/{city_code}.shtml"
-        weather_soup = urllibOpenSoup(weather_url)
+        weather_soup = Get.urllibOpenSoup(weather_url)
         weather = weather_soup.find(
             "input", id="hidden_title").get("value").split()
 
         return weather
 
 
-def sendCityWeatherEveryDay(city="北京"):
+def runSendCityWeatherEveryDay(city="北京"):
     ''' 每天定时发送天气信息到指定邮箱 '''
-    recipients, account, password, subj, text = sendMailInput()
+    recipients, account, password, subj, text = Get.mailSendInput()
     weather = queryChineseWeather(city)
     text = " ".join(weather)
     daytime = input("请问每天的几点发送邮件？格式'18:30'，不包含单引号 ：")
 
-    regularFuncEveryDayTime(sendMail, daytime, recipients, account,
+    Get.scheduleFuncEveryDayTime(Get.mailSend, daytime, recipients, account,
                             password, subj, text)
 
 ```
 
 ### More...
 
-## Examples
+## Examples Running
 
 所有例子的源代码都在crawlerUtils/examples里
-```python
-import crawlerUtils.examples
-
-print(crawlerUtils.examples.__all__)
-```
 
 包括：
+- 播放网易云音乐歌曲
+
+```python
+from crawlerUtils.examples import *
+
+
+runPlayNeteaseSongs()
+```
+
 - 获取QQ音乐某个歌手的歌曲信息和评论
 
 ```python
 from crawlerUtils.examples import *
 
 
-getQQSinger()
+runQQSinger()
 ```
 
 - 获取知乎某个作者的所有文章
@@ -362,7 +380,7 @@ getQQSinger()
 from crawlerUtils.examples import *
 
 
-getZhiHuArticle()
+runZhiHuArticle()
 ```
 
 - 登陆饿了么并获取附近餐厅, 使用了向量空间进行验证码识别
@@ -371,7 +389,7 @@ getZhiHuArticle()
 from crawlerUtils.examples import *
 
 
-getElemeDishes()
+runElemeDishes()
 ```
 
 - 获取豆瓣top250电影信息, 使用requests+正则表达式
@@ -380,7 +398,7 @@ getElemeDishes()
 from crawlerUtils.examples import *
 
 
-getDoubanTop250UseRegexExpression()
+runDoubanTop250UseRegexExpression()
 ```
 
 - 打印Python之禅, Selenium实现登录并用BeatifulSoup解析文本
@@ -389,7 +407,7 @@ getDoubanTop250UseRegexExpression()
 from crawlerUtils.examples import *
 
 
-loginAndPrintZens()
+runLoginAndPrintZens()
 ```
 
 - 每天定时发送天气信息邮件, 使用了urlopen及schedule等函数
@@ -398,7 +416,7 @@ loginAndPrintZens()
 from crawlerUtils.examples import *
 
 
-sendCityWeatherEveryDay()
+runSendCityWeatherEveryDay()
 ```
 
 - 爬取薄荷网十一类食物的热量信息，使用了协程gevent库和写csv函数
@@ -410,6 +428,15 @@ from crawlerUtils.examples import runBoheGevent
 
 
 runBoheGevent()
+```
+
+- 爬取时光网电影信息，使用了requests-html的并发模式及find等方法
+
+```python
+from crawlerUtils.examples import *
+
+
+runShiGuang()
 ```
 
 ### Documentation：
@@ -440,7 +467,7 @@ regex: https://regexr.com/
 
 ## 更新记录
 - Future
-更新内容: utils全部文件改成基础类，由utils/requests.py里的Crawler继承; 增加多进程模块、分布式等; 欢迎提交Pull Request。
+更新内容: 增加多进程模块、分布式等; 欢迎提交Pull Request。
 
 - V1.7.0
 更新内容: 集成了requests-html，支持并发和JavaScript解析(如r = Get(url).html; r.render();r.find();r.search();r.xpath())，重写examples里的shiguang.py；增加了utils.request里的async方法.

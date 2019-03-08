@@ -1,33 +1,37 @@
 import time
+from selenium.common.exceptions import WebDriverException
 
 
-__all__ = ["wait"]
+__all__ = ["Decorator"]
 
 
 MAX_WAIT = 10
 
 
-def wait(fn):
-    ''' 装饰器，不断调用指定的函数，并捕获常规的异常，直到超时为止 '''
-    def modified_fn(*args, **kwargs):
-        start_time = time.time()
-        while True:
-            try:
-                return fn(*args, **kwargs)
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-                time.sleep(0.5)
-    return modified_fn
+class Decorator():
 
+    @classmethod
+    def wait(self, fn):
+        ''' 装饰器，不断调用指定的函数，并捕获常规的异常，直到超时为止 '''
+        def modified_fn(*args, **kwargs):
+            start_time = time.time()
+            while True:
+                try:
+                    return fn(*args, **kwargs)
+                except (AssertionError, WebDriverException) as e:
+                    if time.time() - start_time > MAX_WAIT:
+                        raise e
+                    time.sleep(0.5)
+        return modified_fn
 
-def Singleton(cls):
-    ''' 单例模式装饰器 '''
-    _instance = {}
+    @classmethod
+    def Singleton(self, cls):
+        ''' 单例模式装饰器 '''
+        _instance = {}
 
-    def _singleton(*args, **kargs):
-        if cls not in _instance:
-            _instance[cls] = cls(*args, **kargs)
-        return _instance[cls]
+        def _singleton(*args, **kargs):
+            if cls not in _instance:
+                _instance[cls] = cls(*args, **kargs)
+            return _instance[cls]
 
-    return _singleton
+        return _singleton

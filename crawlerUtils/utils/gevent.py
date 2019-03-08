@@ -4,17 +4,17 @@ import requests
 import time
 
 
-__all__ = ["QUEUE", "geventIt"]
+__all__ = ["Gevent"]
 
+class Gevent():
+    queue = Queue()
 
-QUEUE = Queue()
+    @classmethod
+    def geventIt(self, func, number, urls=None, timeout=20, *arg, **kwargs):
+        if urls != None:
+            for u in urls:
+                print(u)
+                self.queue.put_nowait(u)
 
-
-def geventIt(func, number, urls=None, timeout=20, *arg, **kwargs):
-    if urls != None:
-        for u in urls:
-            print(u)
-            QUEUE.put_nowait(u)
-
-    gevent.joinall(
-        [gevent.spawn(func, *arg, **kwargs) for i in range(number)], timeout=timeout)
+        gevent.joinall(
+            [gevent.spawn(func, *arg, **kwargs) for i in range(number)], timeout=timeout)

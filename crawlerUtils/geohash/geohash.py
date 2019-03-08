@@ -12,7 +12,7 @@ class Geohash:
     del i
 
     @classmethod
-    def decode_exactly(self, geohash):
+    def geohashDecodeExactly(self, geohash):
         lat_interval, lon_interval = (-90.0, 90.0), (-180.0, 180.0)
         lat_err, lon_err = 90.0, 180.0
         is_even = True
@@ -41,7 +41,7 @@ class Geohash:
         return lat, lon, lat_err, lon_err
 
     @classmethod
-    def decode(self, geohash):
+    def geohashDecode(self, geohash):
         lat, lon, lat_err, lon_err = self.decode_exactly(geohash)
         # Format to the number of decimals that are known
         lats = "%.*f" % (max(1, int(round(-log10(lat_err)))) - 1, lat)
@@ -53,7 +53,7 @@ class Geohash:
         return lats, lons
 
     @classmethod
-    def encode(self, latitude, longitude, precision=12):
+    def geohashEncode(self, latitude, longitude, precision=12):
         lat_interval, lon_interval = (-90.0, 90.0), (-180.0, 180.0)
         geohash = []
         bits = [16, 8, 4, 2, 1]

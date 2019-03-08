@@ -1,8 +1,19 @@
 import requests
-import json
 from bs4 import BeautifulSoup
 from requests_html import HTML, HTMLSession, AsyncHTMLSession
-import pprint
+import json
+from .selenium import Selenium
+from .csv import Csv
+from .gevent import Gevent
+from ..geohash import Geohash
+from .time import Time
+from .html import Html
+from .excel import Excel
+from .decorator import Decorator
+from .mail import Mail
+from .log import Log
+from .schedule import Schedule
+from .urllib import Urllib
 
 
 __all__ = [
@@ -10,18 +21,7 @@ __all__ = [
 ]
 
 
-# 下一步集成requests_html
-# from requests_html import HTMLSession
-
-
-# session = HTMLSession()
-# url = 'http://www.mtime.com/top/tv/top100/'
-# r = session.get(url)
-# print(r.html.render())
-# soup = Crawler.getBSText(r.html.search("{}"))
-
-
-class Crawler():
+class Crawler(Selenium, Csv, Gevent, Geohash, Time, Html, Excel, Decorator, Mail, Log, Schedule, Urllib):
     session = requests.session()
     headers = {
         "user-agent": "Mozilla/5.0 (Macintosh Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36",
@@ -30,62 +30,40 @@ class Crawler():
     html_session = HTMLSession()
     async_session = AsyncHTMLSession()
 
+    def __init__(self):
+        super().__init__()
+
     @classmethod
-    def addHeaders(self, value):
+    def headersAdd(self, value):
         ''' 添加headers条目 '''
         self.headers.update(value)
         self.session.headers = self.headers
 
     @classmethod
-    def setHeaders(self, value):
+    def headersSet(self, value):
         ''' 设置session.headers '''
         self.headers = value
         self.session.headers = self.headers
 
     @classmethod
-    def beautifulJson(self, text):
-        ''' 处理异常格式Json '''
-        start_temp = text.find("{")
-        end_temp = text.rfind("}") + 1
-        start = text.find("[")
-        end = text.rfind("]") + 1
-        if start < start_temp and start != -1:
-            text_json = text[start:end]
-        elif start > start_temp and start_temp != -1:
-            text_json = text[start_temp:end_temp]
-        elif start < start_temp and start_temp != -1:
-            text_json = text[start_temp:end_temp]
-        elif start > start_temp and start != -1:
-            text_json = text[start:end]
-        if text_json:
-            return json.loads(text_json)
-        else:
-            return ""
-
-    @classmethod
-    def getBSText(self, text, parser="html.parser"):
-        """ 返回BeautifulSoup(text, "html.parser") """
-        return BeautifulSoup(text, parser)
-
-    @classmethod
-    def stringCookiesToDict(cls, cookie):
+    def cookiesStringToDict(cls, cookie):
         """从浏览器或者request headers中拿到cookie字符串，提取为字典格式的cookies"""
         cookies = dict([l.split("=", 1) for l in cookie.split(";")])
         return cookies
 
     @classmethod
-    def setCookiesFromDict(cls, cookies_dict):
+    def cookiesSetFromDict(cls, cookies_dict):
         ''' 从字典设置Session的cookies '''
         cls.session.cookies = requests.utils.cookiejar_from_dict(
             cookies_dict)
 
     @classmethod
-    def readCookies(cls, filepath="", cookies=""):
+    def cookiesRead(cls, filepath="", cookies=""):
         """ 从txt文件读取cookies """
         # 如果能读取到cookies文件，执行以下代码，跳过except的代码，不用登录就能发表评论。
         cookies_dict = {}
         if cookies:
-            cookies_dict = cls.stringCookiesToDict(cookies)
+            cookies_dict = cls.cookiesStringToDict(cookies)
             cookies = requests.utils.cookiejar_from_dict(cookies_dict)
             cls.session.cookies = cookies
         if not filepath:
@@ -96,23 +74,20 @@ class Crawler():
             cookies_dict = cookies_txt.read()
             if cookies_dict:
                 cookies_dict = json.loads(cookies_dict)
-            # 调用json模块的loads函数，把字符串转成字典。
-            cookies = requests.utils.cookiejar_from_dict(cookies_dict)
-            # 把转成字典的cookies再转成cookies本来的格式。
-            cls.session.cookies = cookies
+            cls.cookiesSetFromDict(cookies_dict)
             # 获取cookies：就是调用requests对象（session）的cookies属性。
             cookies_txt.close()
         except FileNotFoundError:
             pass
 
     @classmethod
-    def parserHtml(self, doc):
+    def htmlParser(self, doc):
         ''' 分析一段HTML文本, 返回requests-html对象 '''
         html = HTML(html=doc)
         return html
 
     @classmethod
-    def runAsync(self, func, number, *args, **kwargs):
+    def asyncRun(self, func, number, *args, **kwargs):
         ''' 运行异步定义函数 '''
         func_list = [func for i in range(number)]
         result = self.async_session.run(*func_list)
@@ -140,10 +115,36 @@ class Get(Crawler):
             return self.__repr__()
 
     @property
+    def driver(self):
+        ''' 返回driver '''
+        driver = self.getDriver()
+        driver.get(self.url)
+        return driver
+
+    @property
+    def hdriver(self):
+        ''' 返回headlessDriver '''
+        driver = self.getDriverHeadLess()
+        driver.get(self.url)
+        return driver
+
+    @property
     def text(self):
         ''' 返回response.text '''
         response = self.getGet(self.session)
         return response.text
+
+    @property
+    def rtext(self):
+        ''' 返回render()后的response.text '''
+        rtext = self.getSeleniumText(self.url)
+        return rtext
+
+    @property
+    def rhtext(self):
+        ''' 无头模式返回render()后的response.text '''
+        rhtext = getSeleniumTextHeadLess(self.url)
+        return rhtext
 
     @property
     def json(self):
@@ -151,9 +152,33 @@ class Get(Crawler):
         return self.beautifulJson(self.text)
 
     @property
+    def rjson(self):
+        ''' 返回render()后的json.loads(response.text) '''
+        rjson = self.getSeleniumJson(self.url)
+        return rjson
+
+    @property
+    def rhjson(self):
+        ''' 无头模式返回render()后的json.loads(response.text) '''
+        rhjson = getSeleniumJsonHeadLess(self.url)
+        return rhjson
+
+    @property
     def soup(self):
         ''' 返回BeautifulSoup对象 '''
-        return self.getBSText(self.text, self.parser)
+        return self.beautifulSoup(self.text, self.parser)
+
+    @property
+    def rsoup(self):
+        ''' 返回render()后的BeautifulSoup对象 '''
+        rsoup = getSeleniumSoup(self.url)
+        return rsoup
+    
+    @property
+    def rhsoup(self):
+        ''' 无头模式返回render()后的BeautifulSoup对象 '''
+        rhsoup = getSeleniumSoupHeadLess(self.url)
+        return rhsoup
 
     def getGet(self, session):
         ''' 返回response对象 '''
@@ -172,6 +197,13 @@ class Get(Crawler):
     def html(self):
         ''' 返回requests-html的HTMLSession对象 '''
         return self.getGet(self.html_session).html
+
+    @property
+    def rhtml(self):
+        ''' 返回render()后的requests-html的HTMLSession对象 '''
+        r = self.getGet(self.html_session).html
+        r.render()
+        return r
 
     @property
     async def ahtml(self):
@@ -201,14 +233,14 @@ class Get(Crawler):
         return BeautifulSoup(text, self.parser)
 
     @property
-    async def rhtml(self):
+    async def arhtml(self):
         ''' 返回arender()后的async Get(url).html'''
         r = await self.async_session.get(self.url)
         await r.html.arender()
         return r.html
 
     @property
-    async def rtext(self):
+    async def artext(self):
         ''' 返回arender()后的async Get(url).text '''
         r = await self.async_session.get(self.url)
         await r.html.arender()
@@ -216,7 +248,7 @@ class Get(Crawler):
         return text
 
     @property
-    async def rjson(self):
+    async def arjson(self):
         ''' 返回arender()后的async Get(url).json '''
         r = await self.async_session.post(self.url)
         await r.html.arender()
@@ -224,7 +256,7 @@ class Get(Crawler):
         return text
 
     @property
-    async def rsoup(self):
+    async def arsoup(self):
         ''' 返回arender()后的async Get(url).soup '''
         r = await self.async_session.get(self.url)
         await r.html.arender()
@@ -253,10 +285,36 @@ class Post(Crawler):
             return self.__repr__()
 
     @property
+    def driver(self):
+        ''' 返回driver '''
+        driver = self.getDriver()
+        driver.get(self.url)
+        return driver
+
+    @property
+    def hdriver(self):
+        ''' 返回headlessDriver '''
+        driver = self.getDriverHeadLess()
+        driver.get(self.url)
+        return driver
+
+    @property
     def text(self):
         ''' 返回response.text '''
         response = self.getPost(self.session)
         return response.text
+
+    @property
+    def rtext(self):
+        ''' 返回render()后的response.text '''
+        rtext = self.getSeleniumText(self.url)
+        return rtext
+
+    @property
+    def rhtext(self):
+        ''' 无头模式返回render()后的response.text '''
+        rhtext = getSeleniumTextHeadLess(self.url)
+        return rhtext
 
     @property
     def json(self):
@@ -264,9 +322,33 @@ class Post(Crawler):
         return self.beautifulJson(self.text)
 
     @property
+    def rjson(self):
+        ''' 返回render()后的json.loads(response.text) '''
+        rjson = self.getSeleniumJson(self.url)
+        return rjson
+
+    @property
+    def rhjson(self):
+        ''' 无头模式返回render()后的json.loads(response.text) '''
+        rhjson = getSeleniumJsonHeadLess(self.url)
+        return rhjson
+
+    @property
     def soup(self):
         ''' 返回BeautifulSoup对象 '''
-        return self.getBSText(self.text, self.parser)
+        return self.beautifulSoup(self.text, self.parser)
+
+    @property
+    def rsoup(self):
+        ''' 返回render()后的BeautifulSoup对象 '''
+        rsoup = getSeleniumSoup(self.url)
+        return rsoup
+    
+    @property
+    def rhsoup(self):
+        ''' 无头模式返回render()后的BeautifulSoup对象 '''
+        rhsoup = getSeleniumSoupHeadLess(self.url)
+        return rhsoup
 
     def getPost(self, session):
         ''' 返回response对象 '''
@@ -300,6 +382,13 @@ class Post(Crawler):
         return self.getPost(self.html_session).html
 
     @property
+    def rhtml(self):
+        ''' 返回render()后的requests-html的HTMLSession对象 '''
+        r = self.getPost(self.html_session).html
+        r.render()
+        return r
+
+    @property
     async def ahtml(self):
         ''' 返回async post(url).html '''
         r = await self.async_session.post(self.url)
@@ -327,14 +416,14 @@ class Post(Crawler):
         return BeautifulSoup(text, self.parser)
 
     @property
-    async def rhtml(self):
+    async def arhtml(self):
         ''' 返回arender()后的async Post(url).html'''
         r = await self.async_session.post(self.url)
         await r.html.arender()
         return r.html
 
     @property
-    async def rtext(self):
+    async def artext(self):
         ''' 返回arender()后的async Post(url).text '''
         r = await self.async_session.post(self.url)
         await r.html.arender()
@@ -342,7 +431,7 @@ class Post(Crawler):
         return text
 
     @property
-    async def rjson(self):
+    async def arjson(self):
         ''' 返回arender()后的async Post(url).json '''
         r = await self.async_session.post(self.url)
         await r.html.arender()
@@ -350,7 +439,7 @@ class Post(Crawler):
         return text
 
     @property
-    async def rsoup(self):
+    async def arsoup(self):
         ''' 返回arender()后的async Post(url).soup '''
         r = await self.async_session.post(self.url)
         await r.html.arender()
