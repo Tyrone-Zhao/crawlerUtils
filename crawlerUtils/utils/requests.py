@@ -81,7 +81,6 @@ class Crawler():
 
     @classmethod
     def readCookies(cls, filepath="", cookies=""):
-        print(filepath)
         """ 从txt文件读取cookies """
         # 如果能读取到cookies文件，执行以下代码，跳过except的代码，不用登录就能发表评论。
         cookies_dict = {}
