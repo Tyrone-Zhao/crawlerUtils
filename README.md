@@ -7,7 +7,7 @@ pip install --user --upgrade crawlerUtils
 ```
 
 ## Usages
-**crawlerUtils.utils.requests contains the methods:**
+**crawlerUtils.utils.crawler contains the follow methods:**
 
 Crawler is the BaseClass, which is inherited by Get Class and Post Class in utils/crawler.py.
 the other Classes in utils is inherited by Crawler.
