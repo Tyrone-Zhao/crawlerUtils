@@ -215,21 +215,21 @@ class Get(Crawler):
     async def atext(self):
         ''' 返回async Get(url).text '''
         r = await self.async_session.get(self.url)
-        text = r.content.decode("utf-8")
+        text = r.content.decode(self.encoding)
         return text
     
     @property
     async def ajson(self):
         ''' 返回async Get(url).json '''
         r = await self.async_session.post(self.url)
-        text = self.beautifulJson(r.content.decode("utf-8"))
+        text = self.beautifulJson(r.content.decode(self.encoding))
         return text
 
     @property
     async def asoup(self):
         ''' 返回async Get(url).soup '''
         r = await self.async_session.get(self.url)
-        text = r.content.decode("utf-8")
+        text = r.content.decode(self.encoding)
         return BeautifulSoup(text, self.parser)
 
     @property
@@ -244,7 +244,7 @@ class Get(Crawler):
         ''' 返回arender()后的async Get(url).text '''
         r = await self.async_session.get(self.url)
         await r.html.arender()
-        text = r.content.decode("utf-8")
+        text = r.content.decode(self.encoding)
         return text
 
     @property
@@ -252,7 +252,7 @@ class Get(Crawler):
         ''' 返回arender()后的async Get(url).json '''
         r = await self.async_session.post(self.url)
         await r.html.arender()
-        text = self.beautifulJson(r.content.decode("utf-8"))
+        text = self.beautifulJson(r.content.decode(self.encoding))
         return text
 
     @property
@@ -260,7 +260,7 @@ class Get(Crawler):
         ''' 返回arender()后的async Get(url).soup '''
         r = await self.async_session.get(self.url)
         await r.html.arender()
-        text = r.content.decode("utf-8")
+        text = r.content.decode(self.encoding)
         return BeautifulSoup(text, self.parser)
 
 
@@ -398,21 +398,21 @@ class Post(Crawler):
     async def atext(self):
         ''' 返回async Post(url).text '''
         r = await self.async_session.post(self.url)
-        text = r.content.decode("utf-8")
+        text = r.content.decode(self.encoding)
         return text
     
     @property
     async def ajson(self):
         ''' 返回async Post(url).json '''
         r = await self.async_session.post(self.url)
-        text = self.beautifulJson(r.content.decode("utf-8"))
+        text = self.beautifulJson(r.content.decode(self.encoding))
         return text
 
     @property
     async def asoup(self):
         ''' 返回async Post(url).soup '''
         r = await self.async_session.post(self.url)
-        text = r.content.decode("utf-8")
+        text = r.content.decode(self.encoding)
         return BeautifulSoup(text, self.parser)
 
     @property
@@ -427,7 +427,7 @@ class Post(Crawler):
         ''' 返回arender()后的async Post(url).text '''
         r = await self.async_session.post(self.url)
         await r.html.arender()
-        text = r.content.decode("utf-8")
+        text = r.content.decode(self.encoding)
         return text
 
     @property
@@ -435,7 +435,7 @@ class Post(Crawler):
         ''' 返回arender()后的async Post(url).json '''
         r = await self.async_session.post(self.url)
         await r.html.arender()
-        text = self.beautifulJson(r.content.decode("utf-8"))
+        text = self.beautifulJson(r.content.decode(self.encoding))
         return text
 
     @property
@@ -443,5 +443,5 @@ class Post(Crawler):
         ''' 返回arender()后的async Post(url).soup '''
         r = await self.async_session.post(self.url)
         await r.html.arender()
-        text = r.content.decode("utf-8")
+        text = r.content.decode(self.encoding)
         return BeautifulSoup(text, self.parser)
