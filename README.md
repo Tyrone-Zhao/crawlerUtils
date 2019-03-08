@@ -8,6 +8,17 @@ pip install --user --upgrade crawlerUtils
 
 ## Usages
 **crawlerUtils.utils.requests contains the methods:**
+crawler is the BaseClass, which is inherited by Get Class and Post Class
+- Crawler.addHeaders(value) -- add the requests headers
+- Crawler.setHeaders(value) -- reset the requests headers
+- Crawler.beautifulJson(text) -- deal the text to json
+- Crawler.getBSText(text, parser="html.parser") -- return BeautifulSoup object
+- Crawler.stringCookiesToDict(cookie) -- get cookies to dict from type string cookies
+- Crawler.setCookiesFromDict(cookies_dict) -- set session cookies from dict
+- Crawler.readCookies(filepath="", cookies="") -- set session cookies from txt
+- Crawler.parserHtml(doc) -- read string object and return requests-html HTML object
+- Crawler.runAsync(func, number, *args, **kwargs) -- run async requests-html Aysnc func
+
 - Get(url).text == requests.get(url).text
 - Get(url).json ~= json.loads(requests.get(url).text)
 - Get(url).soup ~= BeautifulSoup(requests.get(url).text, "html.parser")
@@ -20,6 +31,9 @@ pip install --user --upgrade crawlerUtils
 - Get(url).rtext ~= await request-html.get(url).text.arender()
 - Get(url).rjson ~= await json.loads(request-html.get(url).text.arender())
 - Get(url).rsoup ~= await BeautifulSoup(request-html.get(url).text.arender(), "html.parser")
+- Post(url).text == requests.post(url).text
+- Post(url).json ~= json.loads(requests.post(url).text)
+- ...
 
 
 ### crawlerUtils.utils.requests and crawlerUtils.utils.csv
@@ -360,7 +374,7 @@ from crawlerUtils.examples import *
 loginAndPrintZens()
 ```
 
-- 每天定时发送天气信息邮件, 使用了urlopen等函数
+- 每天定时发送天气信息邮件, 使用了urlopen及schedule等函数
 
 ```python
 from crawlerUtils.examples import *
@@ -380,17 +394,35 @@ from crawlerUtils.examples import runBoheGevent
 runBoheGevent()
 ```
 
-### Resources：
+### Documentation：
 requests: https://github.com/kennethreitz/requests
 
 bs4: https://www.crummy.com/software/BeautifulSoup/bs4/doc/
 
 requests-html: https://github.com/kennethreitz/requests-html
 
+selenium: https://www.seleniumhq.org/docs/
+
+gevent: http://www.gevent.org/contents.html
+
+excel: http://www.python-excel.org/
+
+csv: https://docs.python.org/3/library/csv.html?highlight=csv#module-csv
+
+log: https://docs.python.org/3/library/logging.html?highlight=log#module-logging
+
+urllib: https://docs.python.org/3/library/urllib.html
+
+email: https://docs.python.org/3/library/email.html?highlight=mail#module-email
+
+schedule: https://schedule.readthedocs.io/en/stable/
+
+regex: https://regexr.com/
+
 
 ## 更新记录
 - Future
-更新内容: utils全部文件改成基础类，由utils/utils.py里的Crawler继承; 增加多进程模块、分布式等; 欢迎提交Pull Request。
+更新内容: utils全部文件改成基础类，由utils/requests.py里的Crawler继承; 增加多进程模块、分布式等; 欢迎提交Pull Request。
 
 - V1.7.0
 更新内容: 集成了requests-html，支持并发和JavaScript解析(如r = Get(url).html; r.render();r.find();r.search();r.xpath())，重写examples里的shiguang.py；增加了utils.request里的async方法.
