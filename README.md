@@ -11,7 +11,7 @@ pip install --user --upgrade crawlerUtils
 
 Crawler is the BaseClass, which is inherited by Get Class and Post Class in utils/crawler.py.
 the other Classes in utils is inherited by Crawler.
-Also some of the Classes maybe inherited BaseCrawler Class in utils/base.py
+Also some of the Classes maybe inherite BaseCrawler Class in utils/base.py
 
 - Crawler.headersAdd(value) -- add the requests headers
 - Crawler.headersSet(value) -- reset the requests headers
@@ -147,7 +147,7 @@ def crawler():
 def runBoheGevent():
     Get.csvWrite(filepath="薄荷.csv")
     Get.csvWrite(filepath="薄荷.csv", row=["食物名称", "食物链接", "食物热量"])
-    Get.geventIt(crawler, 5)
+    Get.geventRun(crawler, 5)
 ```
 
 ### crawlerUtils.utils.log

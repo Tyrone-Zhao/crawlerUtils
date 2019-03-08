@@ -10,7 +10,7 @@ class Gevent():
     queue = Queue()
 
     @classmethod
-    def geventIt(self, func, number, urls=None, timeout=20, *arg, **kwargs):
+    def geventRun(self, func, number, urls=None, timeout=20, *arg, **kwargs):
         if urls != None:
             for u in urls:
                 print(u)
