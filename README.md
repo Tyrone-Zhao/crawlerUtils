@@ -151,7 +151,7 @@ def runBoheGevent():
 ```
 
 ### crawlerUtils.utils.log
-result had be writen into all.log and error.log
+result will be writen into all.log and error.log
 ```python
 from crawlerUtils import Crawler
 
