@@ -60,7 +60,6 @@ print(dir(Crawler))
 ### Deal JavaScript in Iframe
 ```python
 from crawlerUtils import Get
-import re
 
 
 def runDangdangBook():
@@ -71,10 +70,8 @@ def runDangdangBook():
         start_urls.append(url)
 
     for url in start_urls:
-        text = Get.urllibOpenText(url, encoding="gb18030")
-        # print(text[text.find("活着")-1000:])
-        ul = re.findall('<ul class="bang_list clearfix bang_list_mode".*?/ul>', text, flags=re.S)[0]
-        books = Get.beautifulSoup(ul).find_all("li")
+        soup = Get(url, encoding="gb18030").soup
+        books = soup.find("ul", {"class": "bang_list"}).find_all("li")
         for book in books:
             name = book.find("div", {"class": "name"}).text
             author = book.find("div", {"class": "publisher_info"}).text
