@@ -36,6 +36,24 @@ crawler is the BaseClass, which is inherited by Get Class and Post Class
 - ...
 
 
+### Get(url).html
+```python
+from crawlerUtils import Get
+
+url = "https://book.douban.com/top250?start=0"
+
+soup = Get(url).html
+trs = soup.find("tr.item")
+for tr in trs:
+    book_name = tr.find("td")[1].find("a", first=True).text
+    author = tr.find("p.pl", first=True).text
+    rating = tr.find("span.rating_nums", first=True).text
+    introduction = tr.find("span.inq", first=True).text
+    print("书名：{0}\n作者：{1}\n评分：{2}\n简介：{3}\n".format(
+        book_name, author, rating, introduction))
+```
+
+
 ### crawlerUtils.utils.requests and crawlerUtils.utils.csv
 ```python
 from crawlerUtils import writeCsv, Get
