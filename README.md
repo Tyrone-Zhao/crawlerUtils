@@ -388,103 +388,6 @@ def runSendCityWeatherEveryDay(city="北京"):
 
 ### More...
 
-## Examples Running
-
-所有例子的源代码都在crawlerUtils/examples里
-
-包括：
-- 播放网易云音乐歌曲
-
-```python
-from crawlerUtils.examples import *
-
-
-runPlayNeteaseSongs()
-```
-
-- 获取QQ音乐某个歌手的歌曲信息和评论
-
-```python
-from crawlerUtils.examples import *
-
-
-runQQSinger()
-```
-
-- 获取知乎某个作者的所有文章
-
-```python
-from crawlerUtils.examples import *
-
-
-runZhiHuArticle()
-```
-
-- 登陆饿了么并获取附近餐厅, 使用了向量空间进行验证码识别
-
-```python
-from crawlerUtils.examples import *
-
-
-runElemeDishes()
-```
-
-- 获取豆瓣top250电影信息, 使用requests+正则表达式
-
-```python
-from crawlerUtils.examples import *
-
-
-runDoubanTop250UseRegexExpression()
-```
-
-- 打印Python之禅, Selenium实现登录并用BeatifulSoup解析文本
-
-```python
-from crawlerUtils.examples import *
-
-
-runLoginAndPrintZens()
-```
-
-- 每天定时发送天气信息邮件, 使用了urlopen及schedule等函数
-
-```python
-from crawlerUtils.examples import *
-
-
-runSendCityWeatherEveryDay()
-```
-
-- 爬取薄荷网十一类食物的热量信息，使用了协程gevent库和写csv函数
-
-```python
-from gevent import monkey
-monkey.patch_all()
-from crawlerUtils.examples import runBoheGevent
-
-
-runBoheGevent()
-```
-
-- 爬取时光网电影信息，使用了requests-html的并发模式及find等方法
-
-```python
-from crawlerUtils.examples import *
-
-
-runShiGuang()
-```
-
-- 爬取当当图书的图书信息，处理iframe中的javascript
-
-```python
-from crawlerUtils.examples import *
-
-
-runDangdangBook()
-```
-
 ### Documentation：
 requests: https://github.com/kennethreitz/requests
 
@@ -513,7 +416,7 @@ regex: https://regexr.com/
 
 ## 更新记录
 - Future
-更新内容: 增加多进程模块、分布式等; 欢迎提交Pull Request。
+更新内容: 增加redis模块、设置代理、监控、多进程模块、分布式等; 欢迎提交Pull Request。
 
 - V1.7.0
 更新内容: 集成了requests-html，支持并发和JavaScript解析(如r = Get(url).html; r.render();r.find();r.search();r.xpath())，重写examples里的shiguang.py；增加了utils.request里的async方法.
