@@ -11,6 +11,9 @@ class Geohash:
         __decodemap[__base32[i]] = i
     del i
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     @classmethod
     def geohashDecodeExactly(self, geohash):
         lat_interval, lon_interval = (-90.0, 90.0), (-180.0, 180.0)

@@ -6,6 +6,9 @@ __all__ = ["Csv"]
 
 class Csv():
 
+    def __init__(self, **kwargs):
+        super().__init__()
+
     @classmethod
     def csvWrite(self, row=None, dict_params=None, fieldnames=None, filepath=None,
                 writer=None, mode="w", newline="", encoding="utf-8-sig", *args, **kwargs):

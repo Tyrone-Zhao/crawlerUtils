@@ -1,5 +1,6 @@
 import time
 from selenium.common.exceptions import WebDriverException
+from .base import BaseCrawler
 
 
 __all__ = ["Decorator"]
@@ -9,6 +10,9 @@ MAX_WAIT = 10
 
 
 class Decorator():
+
+    def __init__(self, **kwargs):
+        super().__init__()
 
     @classmethod
     def wait(self, fn):

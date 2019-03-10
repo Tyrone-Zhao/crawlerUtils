@@ -416,7 +416,9 @@ regex: https://regexr.com/
 
 ## 更新记录
 - Future
-更新内容: 增加redis模块、设置代理、监控、多进程模块、分布式等; 欢迎提交Pull Request。
+可选内容: 增加robots.txt选项、自动翻页、增量抓取、特性定制、redis模块、mongodb模块、设置代理、监控、分布式、数据分析与可视化、cython、PyPy优化、验证码识别模块、针对封ip的解决方案(代理池)、数据写入间隔等; 欢迎提交Pull Request。
+
+- V1.8.0 增加了多进程及协程的脚本，但是因为文件描述符问题，目前不能集成到框架，等待后续解决。
 
 - V1.7.0
 更新内容: 集成了requests-html，支持并发和JavaScript解析(如r = Get(url).html; r.render();r.find();r.search();r.xpath())，重写examples里的shiguang.py；增加了utils.request里的async方法.

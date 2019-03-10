@@ -6,6 +6,9 @@ __all__ = ["Time"]
 
 class Time():
 
+    def __init__(self, **kwargs):
+        super().__init__()
+
     @classmethod
     def timestamp_datetime(self, value):
         ''' 将Linux时间戳转化为2018-10-03 12:04:56类型的时间格式 '''

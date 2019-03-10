@@ -11,6 +11,9 @@ __all__ = [
 
 class Mail():
 
+    def __init__(self, **kwargs):
+        super().__init__()
+
     @classmethod
     def mailSend(self, recipients=[], account="", password="", subj="", text=""):
         """ 发送邮件 """

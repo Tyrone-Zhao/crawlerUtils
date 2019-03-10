@@ -12,6 +12,9 @@ __all__ = [
 
 class Selenium(BaseCrawler):
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     @classmethod
     def getDriver(self, options=None):
         ''' 返回Selenium Chrome Driver '''

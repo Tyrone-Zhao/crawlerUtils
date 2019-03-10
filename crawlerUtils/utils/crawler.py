@@ -1,7 +1,7 @@
-import requests
-from bs4 import BeautifulSoup
 from requests_html import HTML, HTMLSession, AsyncHTMLSession
 import json
+import requests
+from bs4 import BeautifulSoup
 from .selenium import Selenium
 from .csv import Csv
 from .gevent import Gevent
@@ -14,7 +14,6 @@ from .mail import Mail
 from .log import Log
 from .schedule import Schedule
 from .urllib import Urllib
-
 
 __all__ = [
     "Crawler", "Get", "Post"
@@ -30,8 +29,8 @@ class Crawler(Selenium, Csv, Gevent, Geohash, Time, Html, Excel, Decorator, Mail
     html_session = HTMLSession()
     async_session = AsyncHTMLSession()
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     @classmethod
     def headersAdd(self, value):
@@ -95,9 +94,9 @@ class Crawler(Selenium, Csv, Gevent, Geohash, Time, Html, Excel, Decorator, Mail
 
 
 class Get(Crawler):
-    def __init__(self, url="", *args, headers={}, params={}, data={}, jsons={},
-                 parser="html.parser", encoding="utf-8", async_funcs=[], **kwargs):
-        super().__init__()
+    def __init__(self, url="", headers={}, params={}, data={}, jsons={},
+                 parser="html.parser", encoding="utf-8", **kwargs):
+        super().__init__(**kwargs)
         self.url = url
         self.add_headers = headers
         self.params = params
@@ -105,7 +104,6 @@ class Get(Crawler):
         self.jsons = jsons
         self.parser = parser
         self.encoding = encoding
-        self.args = args
         self.kwargs = kwargs
 
     def __str__(self):
@@ -173,7 +171,7 @@ class Get(Crawler):
         ''' 返回render()后的BeautifulSoup对象 '''
         rsoup = getSeleniumSoup(self.url)
         return rsoup
-    
+
     @property
     def rhsoup(self):
         ''' 无头模式返回render()后的BeautifulSoup对象 '''
@@ -184,11 +182,11 @@ class Get(Crawler):
         ''' 返回response对象 '''
         if self.jsons:
             res = session.get(
-                self.url, headers=self.add_headers, json=self.jsons, *self.args, **self.kwargs
+                self.url, headers=self.add_headers, json=self.jsons, **self.kwargs
             )
         else:
             res = session.get(
-                self.url, headers=self.add_headers, params=self.params, data=self.data, *self.args, **self.kwargs
+                self.url, headers=self.add_headers, params=self.params, data=self.data, **self.kwargs
             )
         res.encoding = self.encoding
         return res
@@ -217,7 +215,7 @@ class Get(Crawler):
         r = await self.async_session.get(self.url)
         text = r.content.decode(self.encoding)
         return text
-    
+
     @property
     async def ajson(self):
         ''' 返回async Get(url).json '''
@@ -263,11 +261,17 @@ class Get(Crawler):
         text = r.content.decode(self.encoding)
         return BeautifulSoup(text, self.parser)
 
+    @property
+    async def masoup(self, url):
+        r = self.getGet(self.session)
+        soup = BeautifulSoup(r.text, "html.parser")
+        return soup
+
 
 class Post(Crawler):
-    def __init__(self, url="", *args, headers={}, params={}, data={}, jsons={},
-                 parser="html.parser", encoding="utf-8", async_funcs=[], **kwargs):
-        super().__init__()
+    def __init__(self, url="", headers={}, params={}, data={}, jsons={},
+                 parser="html.parser", encoding="utf-8", **kwargs):
+        super().__init__(**kwargs)
         self.url = url
         self.add_headers = headers
         self.params = params
@@ -275,7 +279,6 @@ class Post(Crawler):
         self.jsons = jsons
         self.parser = parser
         self.encoding = encoding
-        self.args = args
         self.kwargs = kwargs
 
     def __str__(self):
@@ -343,7 +346,7 @@ class Post(Crawler):
         ''' 返回render()后的BeautifulSoup对象 '''
         rsoup = getSeleniumSoup(self.url)
         return rsoup
-    
+
     @property
     def rhsoup(self):
         ''' 无头模式返回render()后的BeautifulSoup对象 '''
@@ -354,11 +357,11 @@ class Post(Crawler):
         ''' 返回response对象 '''
         if self.jsons:
             res = session.post(
-                self.url, headers=self.add_headers, json=self.jsons, *self.args, **self.kwargs
+                self.url, headers=self.add_headers, json=self.jsons, **self.kwargs
             )
         else:
             res = session.post(
-                self.url, headers=self.add_headers, params=self.params, data=self.data, *self.args, **self.kwargs
+                self.url, headers=self.add_headers, params=self.params, data=self.data, **self.kwargs
             )
         res.encoding = self.encoding
         return res
@@ -400,7 +403,7 @@ class Post(Crawler):
         r = await self.async_session.post(self.url)
         text = r.content.decode(self.encoding)
         return text
-    
+
     @property
     async def ajson(self):
         ''' 返回async Post(url).json '''

@@ -8,6 +8,9 @@ __all__ = [
 
 class Urllib(BaseCrawler):
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     @classmethod
     def urlencode(self, string):
         ''' 返回中文的urlencode()结果 '''

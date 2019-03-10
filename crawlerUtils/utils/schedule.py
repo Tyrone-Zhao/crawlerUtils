@@ -9,6 +9,9 @@ __all__ = [
 
 class Schedule():
 
+    def __init__(self, **kwargs):
+        super().__init__()
+
     @classmethod
     def scheduleRun(self, schedule):
         ''' 运行定时任务 '''

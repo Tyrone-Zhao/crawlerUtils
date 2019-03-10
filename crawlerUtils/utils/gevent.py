@@ -9,6 +9,9 @@ __all__ = ["Gevent"]
 class Gevent():
     queue = Queue()
 
+    def __init__(self, **kwargs):
+        super().__init__()
+
     @classmethod
     def geventRun(self, func, number, urls=None, timeout=20, *arg, **kwargs):
         if urls != None:

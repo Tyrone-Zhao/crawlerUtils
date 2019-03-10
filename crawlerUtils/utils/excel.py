@@ -9,6 +9,9 @@ __all__ = [
 
 class Excel():
 
+    def __init__(self, **kwargs):
+        super().__init__()
+
     @classmethod
     def excelWrite(self, row=None, column=None, label=None, worksheet=None, workbook=None, sheetname=None,
                 encoding="ascii"):

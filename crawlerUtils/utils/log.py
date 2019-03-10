@@ -8,6 +8,9 @@ __all__ = ["Log"]
 
 class Log():
 
+    def __init__(self, **kwargs):
+        super().__init__()
+
     @classmethod
     def logSet(self, allname="all.log", errorname="error.log", encoding="utf-8"):
         # 日志器
