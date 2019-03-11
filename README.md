@@ -57,7 +57,7 @@ print(dir(Crawler))
 
 ## Coding Examples
 
-### Base64 Support
+### Base64 is Supported
 ```python
 from crawlerUtils import Post
 
