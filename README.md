@@ -57,6 +57,76 @@ print(dir(Crawler))
 
 ## Coding Examples
 
+### MultiProcessing and Asyncio
+```python
+import asyncio
+from multiprocessing import Process, cpu_count
+import requests
+import numpy
+
+headers = {
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36"
+}
+
+
+async def getResponse(url):
+    r = requests.get(url, headers=headers)
+    return r
+
+
+def processStart(url_list):
+    tasks = []
+    loop = asyncio.get_event_loop()
+    for url in url_list:
+        if url:
+            tasks.append(asyncio.ensure_future(yourFunc(url)))
+    loop.run_until_complete(asyncio.wait(tasks))
+
+
+def tasksStart(url_list):
+    # 进程池进程数量
+    cpu_num = cpu_count()
+    if len(url_list) <= cpu_num:
+        processes = []
+        for i in range(len(url_list)):
+            url = url_list[i]
+            url_list = [url]
+            p = Process(target=processStart, args=(url_list,))
+            processes.append(p)
+        for p in processes:
+            p.start()
+    else:
+        coroutine_num = len(url_list) // cpu_num
+        processes = []
+        url_list += [""] * (cpu_num * (coroutine_num + 1) - len(url_list))
+        data = numpy.array(url_list).reshape(coroutine_num + 1, cpu_num)
+        for i in range(cpu_num):
+            url_list = data[:, i]
+            p = Process(target=processStart, args=(url_list,))
+            processes.append(p)
+        for p in processes:
+            p.start()
+
+
+async def yourFunc(url):
+    r = await getResponse(url)
+    print('end:{}'.format(url))
+
+
+def multiProcessAsync(url_list):
+    tasksStart(url_list)
+
+
+if __name__ == "__main__":
+    url_list = []
+    for x in range(1, 10000):
+        url_ = 'http://www.baidu.com/?page=%s' % x
+        url_list.append(url_)
+
+    multiProcessAsync(url_list)
+
+```
+
 ### Base64 is Supported
 ```python
 from crawlerUtils import Post
@@ -451,7 +521,7 @@ regex: https://regexr.com/
 
 ## 更新记录
 - Future
-可选内容: 增加robots.txt选项、自动翻页、增量抓取、特性定制、redis模块、mongodb模块、设置代理、监控、分布式、数据分析与可视化、cython、PyPy优化、验证码识别模块、针对封ip的解决方案(代理池)、数据写入间隔等; 欢迎提交Pull Request。
+可选内容: 兼容tornado的异步性能并加入多进程、增加robots.txt选项、自动翻页、增量抓取、特性定制、redis模块、mongodb模块、设置代理、监控、分布式、数据分析与可视化、cython、PyPy优化、验证码识别模块、针对封ip的解决方案(代理池)、数据写入间隔等; 欢迎提交Pull Request。
 
 - V1.8.0 增加了多进程及协程的脚本，但是因为文件描述符问题，目前不能集成到框架，等待后续解决。增加了base64编码和解码支持。
 
