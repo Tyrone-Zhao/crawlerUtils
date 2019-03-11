@@ -1,5 +1,5 @@
 from .captchaRecognizeMain import CAPTCHA_SET, captchaRecognize
-from ..utils import Post, captchaB64decode
+from ..utils import Post
 import os
 import random
 import requests
@@ -24,7 +24,7 @@ def getRequsetCaptcha(headers, telephone_number, dir_path=None, captcha_name="ca
     captcha_json = Post(captcha_url, headers=headers, jsons=captcha_params).json
     captcha_hash = captcha_json["captcha_hash"]
     b64data = captcha_json['captcha_image']
-    filepath, extension = captchaB64decode(b64data, captcha_name, dir_path)
+    filepath, extension = Post.base64decode(b64data, captcha_name, dir_path)
     return filepath, extension, captcha_hash
 
 

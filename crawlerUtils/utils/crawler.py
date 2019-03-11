@@ -14,13 +14,14 @@ from .mail import Mail
 from .log import Log
 from .schedule import Schedule
 from .urllib import Urllib
+from .captcha import Base64
 
 __all__ = [
     "Crawler", "Get", "Post"
 ]
 
 
-class Crawler(Selenium, Csv, Gevent, Geohash, Time, Html, Excel, Decorator, Mail, Log, Schedule, Urllib):
+class Crawler(Selenium, Csv, Gevent, Geohash, Time, Html, Excel, Decorator, Mail, Log, Schedule, Urllib, Base64):
     session = requests.session()
     headers = {
         "user-agent": "Mozilla/5.0 (Macintosh Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36",
