@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from .selenium import Selenium
 from .csv import Csv
 from .gevent import Gevent
-from ..geohash import Geohash
+from .geohash import Geohash
 from .time import Time
 from .html import Html
 from .excel import Excel
@@ -14,14 +14,15 @@ from .mail import Mail
 from .log import Log
 from .schedule import Schedule
 from .urllib import Urllib
-from .captcha import Base64
+from .captcha import Base64, Captcha
 
 __all__ = [
     "Crawler", "Get", "Post"
 ]
 
 
-class Crawler(Selenium, Csv, Gevent, Geohash, Time, Html, Excel, Decorator, Mail, Log, Schedule, Urllib, Base64):
+class Crawler(Selenium, Csv, Gevent, Geohash, Time, Html, Excel, Decorator,
+              Mail, Log, Schedule, Urllib, Base64, Captcha):
     session = requests.session()
     headers = {
         "user-agent": "Mozilla/5.0 (Macintosh Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36",
