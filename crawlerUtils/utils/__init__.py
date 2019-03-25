@@ -1,8 +1,8 @@
-from .captcha import *
+from .crawlerCaptcha import *
 from .crawler import *
-from .math import *
+from .crawlerMath import *
 
 __all__ = []
-__all__.extend(captcha.__all__)
+__all__.extend(crawlerCaptcha.__all__)
 __all__.extend(crawler.__all__)
-__all__.extend(math.__all__)
+__all__.extend(crawlerMath.__all__)

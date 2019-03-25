@@ -1,5 +1,6 @@
 from urllib.request import quote, unquote, urlopen
-from .base import BaseCrawler
+from urllib import parse
+from .crawlerBase import BaseCrawler
 
 __all__ = [
     "Urllib"
@@ -10,6 +11,11 @@ class Urllib(BaseCrawler):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+    @classmethod
+    def urljoin(cls, url1, url2):
+        """ 拼接url """
+        return parse.urljoin(url1, url2)
 
     @classmethod
     def urlencode(self, string):

@@ -1,8 +1,8 @@
 import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from .decorator import Decorator
-from .base import BaseCrawler
+from .crawlerDecorator import Decorator
+from .crawlerBase import BaseCrawler
 
 
 __all__ = [

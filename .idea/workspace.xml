@@ -2,7 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="945c992f-f325-4f71-a7cd-01c3d96673f5" name="默认的" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerBase.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/captcha.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerCaptcha.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/crawler.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/csv.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerCsv.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/decorator.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerDecorator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/excel.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerExcel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/geohash.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerGeohash.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/gevent.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerGevent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/html.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerHtml.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/log.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerLog.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/mail.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerMail.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/math.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerMath.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/others.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerOthers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/schedule.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerSchedule.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/selenium.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerSelenium.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/time.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerTime.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crawlerUtils/utils/urllib.py" beforeDir="false" afterPath="$PROJECT_DIR$/crawlerUtils/utils/crawlerUrllib.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -10,8 +31,43 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/crawlerUtils$crawlerMongodb.coverage" NAME="crawlerMongodb Coverage Results" MODIFIED="1553532370241" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/crawlerUtils/utils" />
+    <SUITE FILE_PATH="coverage/crawlerUtils$noUse.coverage" NAME="noUse Coverage Results" MODIFIED="1553538263799" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/noUse.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="420">
+              <caret line="28" column="16" lean-forward="true" selection-start-line="28" selection-start-column="16" selection-end-line="28" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="82">
+              <caret line="8" column="24" selection-start-line="8" selection-start-column="24" selection-end-line="8" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="265">
+                <caret line="621" column="58" selection-start-line="621" selection-start-column="58" selection-end-line="621" selection-end-column="58" />
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -20,14 +76,18 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/crawlerUtils/utils/__init__.py" />
+        <option value="$PROJECT_DIR$/crawlerUtils/utils/crawler.py" />
+        <option value="$PROJECT_DIR$/noUse.py" />
+        <option value="$PROJECT_DIR$/crawlerUtils/utils/crawlerMongodb.py" />
         <option value="$PROJECT_DIR$/setup.py" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="643" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="13" />
     <option name="y" value="23" />
-    <option name="width" value="1011" />
+    <option name="width" value="1655" />
     <option name="height" value="1027" />
   </component>
   <component name="ProjectLevelVcsManager">
@@ -49,6 +109,12 @@
               <item name="crawlerUtils" type="b2602c69:ProjectViewProjectNode" />
               <item name="crawlerUtils" type="462c0819:PsiDirectoryNode" />
               <item name="crawlerUtils" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="crawlerUtils" type="b2602c69:ProjectViewProjectNode" />
+              <item name="crawlerUtils" type="462c0819:PsiDirectoryNode" />
+              <item name="crawlerUtils" type="462c0819:PsiDirectoryNode" />
+              <item name="utils" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -76,6 +142,58 @@
       </list>
     </option>
   </component>
+  <component name="RunManager" selected="Python.noUse">
+    <configuration name="crawlerMongodb" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="crawlerUtils" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/crawlerUtils/utils" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/crawlerUtils/utils/crawlerMongodb.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="noUse" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="crawlerUtils" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/noUse.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.noUse" />
+        <item itemvalue="Python.crawlerMongodb" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -88,18 +206,23 @@
       <updated>1552303368726</updated>
       <workItem from="1552303370331" duration="740000" />
       <workItem from="1553387685798" duration="610000" />
+      <workItem from="1553532177037" duration="6557000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1350000" />
+    <option name="totallyTimeSpent" value="7907000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="643" y="23" width="1011" height="1027" extended-state="0" />
+    <frame x="-1" y="23" width="1655" height="1027" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25490198" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1816491" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="找到" weight="0.32894737" />
+      <window_info anchor="bottom" id="运行" />
+      <window_info anchor="bottom" id="调试" visible="true" weight="0.32894737" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -111,8 +234,8 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.32894737" />
-      <window_info anchor="bottom" id="Python Console" order="12" />
+      <window_info anchor="bottom" id="Terminal" order="11" weight="0.32894737" />
+      <window_info anchor="bottom" id="Python Console" order="12" weight="0.32894737" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -131,13 +254,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/setup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/crawlerUtils/utils/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -145,6 +261,74 @@
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crawlerUtils/utils/crawlerMath.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crawlerUtils/utils/crawlerLog.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="4" lean-forward="true" selection-start-line="10" selection-start-column="4" selection-end-line="11" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../python_project/pyrequest/db_fixture/mongo_db.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="8" selection-start-line="13" selection-start-column="8" selection-end-line="13" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../mongodb.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="267">
+          <caret line="49" column="6" lean-forward="true" selection-start-line="49" selection-start-column="6" selection-end-line="49" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crawlerUtils/utils/crawler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1693">
+          <caret line="25" column="65" selection-start-line="25" selection-start-column="65" selection-end-line="25" selection-end-column="65" />
+          <folding>
+            <element signature="e#0#61#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/noUse.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="28" column="16" lean-forward="true" selection-start-line="28" selection-start-column="16" selection-end-line="28" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crawlerUtils/utils/crawlerMongodb.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="30" column="24" lean-forward="true" selection-start-line="30" selection-start-column="24" selection-end-line="30" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="82">
+          <caret line="8" column="24" selection-start-line="8" selection-start-column="24" selection-end-line="8" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="265">
+            <caret line="621" column="58" selection-start-line="621" selection-start-column="58" selection-end-line="621" selection-end-column="58" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>

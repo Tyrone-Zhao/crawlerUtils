@@ -57,7 +57,61 @@ print(dir(Crawler))
 
 ## Coding Examples
 
-### Captcha Recognize
+### Inserting data to Mongodb 
+You can set the amount of data to be inserted each time.
+```python
+from crawlerUtils import Get
+
+Get.mongoConnect(mongo_url="mongodb://localhost:27017",
+                 mongo_db="crawler_db", username="", password="")
+url = "http://books.toscrape.com/"
+
+
+def crawler(url):
+    print(url)
+    html = Get(url).html
+    css_selector = "article.product_pod"
+    books = html.find(css_selector)
+    for book in books:
+        name = book.xpath('//h3/a')[0].text
+        price = book.find('p.price_color')[0].text
+        Get.mongoInsertLength(
+            {
+                "书名": name,
+                "价格": price
+            }, collection="crawler_collection", length=100
+        )
+    next_url = html.find('li.next a')
+    if next_url:
+        next_url = Get.urljoin(url, next_url[0].attrs.get("href"))
+        crawler(next_url)
+
+
+crawler(url)
+Get.mongoClose()
+```
+You can also insert all the data at a time.
+```python
+from crawlerUtils import Get
+
+
+list1 = []
+for i in range(10000):
+    list1.append({
+        "姓名": "张三{}".format(i),
+        "性别": "男"
+    })
+
+Get.mongoInsertAll(list1)
+```
+or you can insert one data at a time.
+```python
+Get.mongoConnect()
+Get.mongoInsert({"姓名": "张三", "性别": "男"})
+Get.mongoClose()
+```
+
+### Recognizing Captcha
 only for Constant width 4-letters
 ```python
 from crawlerUtils import Post
@@ -565,7 +619,7 @@ regex: https://regexr.com/
 可选内容: 兼容tornado的异步性能并加入多进程、增加robots.txt选项、自动翻页、增量抓取、特性定制、redis模块、mongodb模块、设置代理、监控、分布式、数据分析与可视化、cython、PyPy优化、验证码识别模块、针对封ip的解决方案(代理池)、数据写入间隔等; 欢迎提交Pull Request。
 
 - V1.8.1 
-更新内容: 增加了等宽4字符验证码的识别
+更新内容: 增加了等宽4字符验证码的识别, 重构了了utils文件夹下的文件名，增加了mongodb数据的插入支持。
 
 - V1.8.0 
 更新内容: 增加了多进程及协程的脚本，但是因为文件描述符问题，目前不能集成到框架，等待后续解决。增加了base64编码和解码支持。

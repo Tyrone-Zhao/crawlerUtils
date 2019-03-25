@@ -1,6 +1,6 @@
 import time
 from selenium.common.exceptions import WebDriverException
-from .base import BaseCrawler
+from .crawlerBase import BaseCrawler
 
 
 __all__ = ["Decorator"]

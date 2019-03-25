@@ -2,19 +2,20 @@ from requests_html import HTML, HTMLSession, AsyncHTMLSession
 import json
 import requests
 from bs4 import BeautifulSoup
-from .selenium import Selenium
-from .csv import Csv
-from .gevent import Gevent
-from .geohash import Geohash
-from .time import Time
-from .html import Html
-from .excel import Excel
-from .decorator import Decorator
-from .mail import Mail
-from .log import Log
-from .schedule import Schedule
-from .urllib import Urllib
-from .captcha import Base64, Captcha
+from .crawlerSelenium import Selenium
+from .crawlerCsv import Csv
+from .crawlerGevent import Gevent
+from .crawlerGeohash import Geohash
+from .crawlerTime import Time
+from .crawlerHtml import Html
+from .crawlerExcel import Excel
+from .crawlerDecorator import Decorator
+from .crawlerMail import Mail
+from .crawlerLog import Log
+from .crawlerSchedule import Schedule
+from .crawlerUrllib import Urllib
+from .crawlerCaptcha import Base64, Captcha
+from .crawlerMongodb import Mongo
 
 __all__ = [
     "Crawler", "Get", "Post"
@@ -22,7 +23,7 @@ __all__ = [
 
 
 class Crawler(Selenium, Csv, Gevent, Geohash, Time, Html, Excel, Decorator,
-              Mail, Log, Schedule, Urllib, Base64, Captcha):
+              Mail, Log, Schedule, Urllib, Base64, Captcha, Mongo):
     session = requests.session()
     headers = {
         "user-agent": "Mozilla/5.0 (Macintosh Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36",
