@@ -92,7 +92,7 @@ class Captcha:
         super().__init__()
 
     @classmethod
-    def createTestSet(cls, captcha_set_path=None, captcha_set=None):
+    def captchaCreateTestSet(cls, captcha_set_path=None, captcha_set=None):
         """ 创建训练数据集，目录为captcha_set_path, captcha_set为验证码可能包含的文字或者字母等的list """
         if captcha_set_path:
             captcha_set_path = captcha_set_path
@@ -185,7 +185,7 @@ class Captcha:
             raise ValueError("分割后的字符数小于4！")
 
     @classmethod
-    def captchaRecognize(cls, image_path, extension, pixel_min=0, captcha_name="chaptcha"):
+    def recognizeCaptcha(cls, image_path, extension, pixel_min=0, captcha_name="chaptcha"):
         """ 识别验证码， 返回二值化验证码和字符分割横坐标，以及图片扩展名 """
         from PIL import Image
 
@@ -220,7 +220,7 @@ class Captcha:
             filepath, extension, *_ = func()
             new_filepath = cls.CAPTCHA_SET_PATH + "/captcha." + extension
             os.system(f"mv '{filepath}' '{new_filepath}'")
-            binary_object, letters, extension = cls.captchaRecognize(filepath, extension, pixel_min=0,
+            binary_object, letters, extension = cls.recognizeCaptcha(filepath, extension, pixel_min=0,
                                                                      captcha_name="chaptcha")
             cls.cropImage(binary_object, letters, extension, dir_path=cls.CAPTCHA_SET_PATH, captcha_name="captcha_binary")
             cls.inputRightCaptchaCode()
@@ -250,14 +250,14 @@ class Captcha:
         return dict1
 
     @classmethod
-    def recognizeCaptcha(cls, func):
+    def captchaRecognize(cls, func):
         """ 识别验证码 """
         captcha_set = cls.CAPTCHA_SET
         dir_path = cls.CAPTCHA_SET_PATH
         filepath, extension, *_ = func()
         new_filepath = cls.CAPTCHA_SET_PATH + "/captcha." + extension
         os.system(f"mv '{filepath}' '{new_filepath}'")
-        binary_object, letters, extension = cls.captchaRecognize(filepath, extension, pixel_min=0,
+        binary_object, letters, extension = cls.recognizeCaptcha(filepath, extension, pixel_min=0,
                                                                  captcha_name="chaptcha")
         v = VectorCompare()
         captcha_set = captcha_set

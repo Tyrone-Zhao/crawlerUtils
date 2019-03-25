@@ -62,7 +62,6 @@ only for Constant width 4-letters
 ```python
 from crawlerUtils import Post
 
-
 # 验证码的字符集合
 CAPTCHA_SET = [
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a',
@@ -70,32 +69,32 @@ CAPTCHA_SET = [
     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
 ]
 
-
 # 根据验证码的字符集合创建验证码训练文件夹
-Post.createTestSet(captcha_set=CAPTCHA_SET)
+Post.captchaCreateTestSet(captcha_set=CAPTCHA_SET)
+
 
 # 请求并获取验证码函数
 def getCaptcha():
     """ 获取验证码的函数必须至少返回filepath->验证码路径, 和extension->验证码图片扩展名如jpeg两个参数 """
     captcha_params = {
-        "captcha_str": "your telephone number",
+        "captcha_str": "your telephone number"
     }
 
     captcha_url = "https://h5.ele.me/restapi/eus/v3/captchas"
 
     captcha_json = Post(captcha_url, jsons=captcha_params).json
-    captcha_hash = captcha_json["captcha_hash"]
     b64data = captcha_json['captcha_image']
 
     filepath, extension = Post.base64decode(b64data)
 
     return filepath, extension
 
+
 # 进行验证码训练, 比如训练2次
 Post.captchaTrain(getCaptcha, times=2)
 
 # 请求一次验证码
-captcha_code = Post.recognizeCaptcha(getCaptcha)
+captcha_code = Post.captchaRecognize(getCaptcha)
 print(f"\n验证码识别结果：{captcha_code}, ", end="")
 ```
 
@@ -565,7 +564,11 @@ regex: https://regexr.com/
 - Future
 可选内容: 兼容tornado的异步性能并加入多进程、增加robots.txt选项、自动翻页、增量抓取、特性定制、redis模块、mongodb模块、设置代理、监控、分布式、数据分析与可视化、cython、PyPy优化、验证码识别模块、针对封ip的解决方案(代理池)、数据写入间隔等; 欢迎提交Pull Request。
 
-- V1.8.0 增加了多进程及协程的脚本，但是因为文件描述符问题，目前不能集成到框架，等待后续解决。增加了base64编码和解码支持。
+- V1.8.1 
+更新内容: 增加了等宽4字符验证码的识别
+
+- V1.8.0 
+更新内容: 增加了多进程及协程的脚本，但是因为文件描述符问题，目前不能集成到框架，等待后续解决。增加了base64编码和解码支持。
 
 - V1.7.0
 更新内容: 集成了requests-html，支持并发和JavaScript解析(如r = Get(url).html; r.render();r.find();r.search();r.xpath())，重写examples里的shiguang.py；增加了utils.request里的async方法.
