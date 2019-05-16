@@ -616,7 +616,7 @@ regex: https://regexr.com/
 
 ## 更新记录
 - Future
-可选内容: 兼容tornado的异步性能并加入多进程、增加robots.txt选项、自动翻页、增量抓取、特性定制、redis模块、mongodb模块、设置代理、监控、分布式、数据分析与可视化、cython、PyPy优化、验证码识别模块、针对封ip的解决方案(代理池)、数据写入间隔等; 欢迎提交Pull Request。
+可选内容: 兼容tornado的异步性能并加入多进程、增加robots.txt选项、自动翻页、增量抓取、特性定制、redis模块、设置代理、监控、分布式、数据分析与可视化、cython、PyPy优化、验证码识别模块、针对封ip的解决方案(代理池)、数据写入间隔等; 欢迎提交Pull Request。
 
 - V1.8.1 
 更新内容: 增加了等宽4字符验证码的识别, 重构了了utils文件夹下的文件名，增加了mongodb数据的插入支持。
